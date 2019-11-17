@@ -1,0 +1,8 @@
+{
+  "forum.service.port": 5000,
+  "forum.service.db.host":"127.0.0.1",
+  "forum.service.db.port": 5432,
+  "forum.service.db.database":"forum",
+  "forum.service.db.user":"postgres",
+  "forum.service.db.password":"1111"
+}
