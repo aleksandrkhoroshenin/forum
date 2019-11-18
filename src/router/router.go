@@ -23,7 +23,7 @@ func CreateRouter() *fasthttprouter.Router {
 	router.POST("/service/clear", database.ClearDB)
 	router.GET("/service/status", database.GetInformationDB)
 
-	router.POST("/user/{nickname}/create", user.CreateUser)
+	router.POST("/user/create", user.CreateUser)
 	router.GET("/user/{nickname}/profile", user.GetUserInfo)
 	router.POST("/user/{nickname}/profile", user.ChangeUserInfo)
 

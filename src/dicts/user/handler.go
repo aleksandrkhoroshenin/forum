@@ -1,7 +1,6 @@
 package user
 
 import (
-	"encoding/json"
 	"forum/src/database"
 	"forum/src/dicts/models"
 	"github.com/valyala/fasthttp"
@@ -9,20 +8,20 @@ import (
 )
 
 func CreateUser(ctx *fasthttp.RequestCtx) {
-	nickname := ctx.FormValue("nickname")
+	//nickname := ctx.FormValue("nickname")
+	//err := json.Unmarshal(nickname, user.Nickname)
+	//if err != nil {
+	//	return
+	//}
 
 	user := &models.User{}
-	err := json.Unmarshal(nickname, user.Nickname)
-	if err != nil {
-		return
-	}
-	err = user.UnmarshalJSON(ctx.Request.Body())
+	err := user.UnmarshalJSON(ctx.Request.Body())
 
 	if err != nil {
 		return
 	}
-	if err = database.DataManager.CreateUserDB(user); err != nil {
-		log.Println(err)
+	if users, err := database.DataManager.CreateUserDB(user); err != nil {
+		log.Println(users, err)
 		return
 	}
 }

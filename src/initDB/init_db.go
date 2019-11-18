@@ -43,7 +43,6 @@ func (db *InitDB) DbConnect(host, database, user, password string, port uint16) 
 		AfterConnect:   nil,
 		AcquireTimeout: 0,
 	}
-
 	p, err := pgx.NewConnPool(poolConfig)
 	if err != nil {
 		log.Println(err)
