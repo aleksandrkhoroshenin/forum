@@ -15,7 +15,7 @@ const (
 type Config struct {
 	Port       int    `json:"forum.service.port"`
 	DbHost     string `json:"forum.service.db.host"`
-	DbPort     int    `json:"forum.service.db.port"`
+	DbPort     uint16 `json:"forum.service.db.port"`
 	DbDatabase string `json:"forum.service.db.database"`
 	DbUser     string `json:"forum.service.db.user"`
 	DbPassword string `json:"forum.service.db.password"`

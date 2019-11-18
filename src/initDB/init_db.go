@@ -7,7 +7,7 @@ import (
 )
 
 type DbManager interface {
-	DbConnect(host, database, user, password string, port int) error
+	DbConnect(host, database, user, password string, port uint16) error
 	GetConnPool() *pgx.ConnPool
 }
 
@@ -23,15 +23,15 @@ func (db InitDB) GetConnPool() *pgx.ConnPool {
 	return db.pool
 }
 
-func (db *InitDB) DbConnect(host, database, user, password string, port int) (err error) {
+func (db *InitDB) DbConnect(host, database, user, password string, port uint16) (err error) {
 	runtimeParams := make(map[string]string)
 	runtimeParams["application_name"] = "dz"
 	conConfig := pgx.ConnConfig{
 		Host:           host,
-		Port:           5432,
-		Database:       "forum",
-		User:           "postgres",
-		Password:       "postgres",
+		Port:           port,
+		Database:       database,
+		User:           user,
+		Password:       password,
 		TLSConfig:      nil,
 		UseFallbackTLS: false,
 		RuntimeParams:  runtimeParams,
