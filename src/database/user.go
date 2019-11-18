@@ -1,4 +1,4 @@
-package userDataManager
+package database
 
 import (
 	"forum/src/dicts/models"
@@ -9,11 +9,7 @@ type UserDataManager interface {
 	CreateUserDB(user *models.User) ([]*models.User, error)
 }
 
-type service struct {
-	conn *pgx.ConnPool
-}
-
-func CreateInstance(conn *pgx.ConnPool) UserDataManager {
+func CreateUserInstance(conn *pgx.ConnPool) UserDataManager {
 	return service{
 		conn: conn,
 	}
@@ -32,18 +28,14 @@ func (s service) CreateUserDB(user *models.User) (users []*models.User, err erro
 	}
 
 	if rows.RowsAffected() == 0 { // пользователь уже есть
-		queryRows, err := s.conn.Query(getUserByNicknameOrEmailScript, &user.Nickname, &user.Email)
-		defer queryRows.Close()
+		user := models.User{}
+		err := s.conn.QueryRow(
+			getUserByNicknameOrEmailScript, &user.Nickname, &user.Email).Scan(&user)
 
 		if err != nil {
 			return nil, err
 		}
 
-		for queryRows.Next() {
-			user := models.User{}
-			queryRows.Scan(&user.Nickname, &user.Fullname, &user.Email, &user.About)
-			users = append(users, &user)
-		}
 		return users, UserIsExist
 	}
 

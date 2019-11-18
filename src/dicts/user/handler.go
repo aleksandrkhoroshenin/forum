@@ -5,17 +5,20 @@ import (
 	"forum/src/dicts/models"
 	"github.com/valyala/fasthttp"
 	"log"
+	"strings"
 )
 
 func CreateUser(ctx *fasthttp.RequestCtx) {
-	//nickname := ctx.FormValue("nickname")
-	//err := json.Unmarshal(nickname, user.Nickname)
-	//if err != nil {
-	//	return
-	//}
+	args := strings.Split(string(ctx.Request.RequestURI()), "/")
+	if len(args) < 4 {
+		// 400
+		return
+	}
 
+	println(ctx.Request.URI().QueryArgs().Peek("nickname"))
 	user := &models.User{}
 	err := user.UnmarshalJSON(ctx.Request.Body())
+	user.Nickname = args[2]
 
 	if err != nil {
 		return
@@ -27,7 +30,13 @@ func CreateUser(ctx *fasthttp.RequestCtx) {
 }
 
 func GetUserInfo(ctx *fasthttp.RequestCtx) {
-	ctx.FormValue("")
+	args := strings.Split(string(ctx.Request.RequestURI()), "/")
+	if len(args) < 3 {
+		// 400
+		return
+	}
+	//nickname := args[1]
+
 }
 
 func ChangeUserInfo(ctx *fasthttp.RequestCtx) {

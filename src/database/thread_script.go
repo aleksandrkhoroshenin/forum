@@ -1,14 +1,14 @@
-package userDataManager
+package database
 
 import "errors"
 
 const (
-	createUserScript = `
+	createThreadScript = `
 		INSERT
 		INTO users ("nickname", "fullname", "email", "about")
 		VALUES ($1, $2, $3, $4) ON CONFLICT DO NOTHING
 	`
-	getUserByNicknameOrEmailScript = `
+	getThreadByNicknameOrEmailScript = `
 		SELECT "nickname", "fullname", "email", "about"
 		FROM users
 		WHERE "nickname" = $1 OR "email" = $2
@@ -16,7 +16,6 @@ const (
 )
 
 var (
-	UserNotFound       = errors.New("User not found")
-	UserIsExist        = errors.New("User was created earlier")
-	UserUpdateConflict = errors.New("User not updated")
+	ThreadIsExist  = errors.New("Thread was created earlier")
+	ThreadNotFound = errors.New("Thread not found")
 )

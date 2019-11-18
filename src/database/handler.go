@@ -1,22 +1,28 @@
 package database
 
 import (
-	"forum/src/database/forumDataManager"
-	"forum/src/database/userDataManager"
 	"github.com/jackc/pgx"
 	"github.com/valyala/fasthttp"
 )
 
 type IDataManager struct {
-	forumDataManager.ForumDataManager
-	userDataManager.UserDataManager
+	ForumDataManager
+	UserDataManager
+	ThreadDataManager
+	PostDataManager
 }
 
 var DataManager IDataManager
 
+type service struct {
+	conn *pgx.ConnPool
+}
+
 func CreateDataManagerInstance(conn *pgx.ConnPool) {
-	DataManager.ForumDataManager = forumDataManager.CreateInstance(conn)
-	DataManager.UserDataManager = userDataManager.CreateInstance(conn)
+	DataManager.ForumDataManager = CreateForumInstance(conn)
+	DataManager.UserDataManager = CreateUserInstance(conn)
+	DataManager.ThreadDataManager = CreateThreadInstance(conn)
+	DataManager.PostDataManager = CreatePostInstance(conn)
 }
 
 func ClearDB(ctx *fasthttp.RequestCtx) {
