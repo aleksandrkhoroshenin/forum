@@ -7,8 +7,10 @@ import (
 )
 
 type DbManager interface {
-	DbConnect(host, port, database, user, password string) error
+	DbConnect(host, database, user, password string, port int) error
+	GetConnPool() *pgx.ConnPool
 }
+
 type InitDB struct {
 	pool *pgx.ConnPool
 }
@@ -17,15 +19,19 @@ func Init() DbManager {
 	return &InitDB{}
 }
 
-func (db *InitDB) DbConnect(host, port, database, user, password string) (err error) {
+func (db InitDB) GetConnPool() *pgx.ConnPool {
+	return db.pool
+}
+
+func (db *InitDB) DbConnect(host, database, user, password string, port int) (err error) {
 	runtimeParams := make(map[string]string)
 	runtimeParams["application_name"] = "dz"
 	conConfig := pgx.ConnConfig{
 		Host:           host,
 		Port:           5432,
-		Database:       "docker",
-		User:           "docker",
-		Password:       "docker",
+		Database:       "forum",
+		User:           "postgres",
+		Password:       "postgres",
 		TLSConfig:      nil,
 		UseFallbackTLS: false,
 		RuntimeParams:  runtimeParams,

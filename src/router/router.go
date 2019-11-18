@@ -11,26 +11,26 @@ import (
 
 func CreateRouter() *fasthttprouter.Router {
 	router := fasthttprouter.New()
-	router.POST("/api/v1/forum/create", forum.CreateForum)
-	router.POST("/api/v1/forum/{slug}/create", forum.CreateForumBranch)
-	router.GET("/api/v1/forum/{slug}/details", forum.GetBranchDetails)
-	router.GET("/api/v1/forum/{slug}/threads", forum.GetBranchThreads)
-	router.GET("/api/v1/forum/{slug}/users", forum.GetBranchUsers)
+	router.POST("/forum/create", forum.CreateForum)
+	router.POST("/forum/{slug}/create", forum.CreateForumBranch)
+	router.GET("/forum/{slug}/details", forum.GetBranchDetails)
+	router.GET("/forum/{slug}/threads", forum.GetBranchThreads)
+	router.GET("/forum/{slug}/users", forum.GetBranchUsers)
 
-	router.POST("/api/v1/post/{id}/details", post.ChangePostDetails)
-	router.GET("/api/v1/post/{id}/details", post.GetPostDetails)
+	router.POST("/post/{id}/details", post.ChangePostDetails)
+	router.GET("/post/{id}/details", post.GetPostDetails)
 
-	router.POST("/api/v1/service/clear", database.ClearDB)
-	router.GET("/api/v1/service/status", database.GetInformationDB)
+	router.POST("/service/clear", database.ClearDB)
+	router.GET("/service/status", database.GetInformationDB)
 
-	router.POST("/api/v1/user/{nickname}/create", user.CreateUser)
-	router.GET("/api/v1/user/{nickname}/profile", user.GetUserInfo)
-	router.POST("/api/v1/user/{nickname}/profile", user.ChangeUserInfo)
+	router.POST("/user/{nickname}/create", user.CreateUser)
+	router.GET("/user/{nickname}/profile", user.GetUserInfo)
+	router.POST("/user/{nickname}/profile", user.ChangeUserInfo)
 
-	router.POST("/api/v1/thread/{slug_or_id}/create", thread.CreateThread)
-	router.GET("/api/v1/thread/{slug_or_id}/details", thread.CreateThreadBranch)
-	router.POST("/api/v1/thread/{slug_or_id}/details", thread.ChangeBranchDetails)
-	router.GET("/api/v1/thread/{slug_or_id}/posts", thread.GetPostFromBranch)
-	router.POST("/api/v1/thread/{slug_or_id}/vote", thread.ChangeVoteForBranch)
+	router.POST("/thread/{slug_or_id}/create", thread.CreateThread)
+	router.GET("/thread/{slug_or_id}/details", thread.CreateThreadBranch)
+	router.POST("/thread/{slug_or_id}/details", thread.ChangeBranchDetails)
+	router.GET("/thread/{slug_or_id}/posts", thread.GetPostFromBranch)
+	router.POST("/thread/{slug_or_id}/vote", thread.ChangeVoteForBranch)
 	return router
 }
