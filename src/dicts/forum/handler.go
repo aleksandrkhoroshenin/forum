@@ -2,9 +2,9 @@ package forum
 
 import (
 	"forum/src/database"
+	"forum/src/dicts"
 	"forum/src/dicts/models"
 	"github.com/valyala/fasthttp"
-	"log"
 )
 
 func CreateForum(ctx *fasthttp.RequestCtx) {
@@ -14,11 +14,17 @@ func CreateForum(ctx *fasthttp.RequestCtx) {
 	if err != nil {
 		return
 	}
-	if err = database.DataManager.CreateForumDB(forum); err != nil {
-		log.Println(err)
-		return
+	err = database.DataManager.CreateForumDB(forum)
+	switch err {
+	case nil:
+		dicts.MakeResponse(ctx, 201, forum)
+	case database.UserNotFound:
+		dicts.MakeResponse(ctx, 404, forum)
+	case database.ForumIsExist:
+		dicts.MakeResponse(ctx, 409, forum)
+	default:
+		dicts.MakeResponse(ctx, 500, forum)
 	}
-
 }
 
 func CreateForumBranch(ctx *fasthttp.RequestCtx) {

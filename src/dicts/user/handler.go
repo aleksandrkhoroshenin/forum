@@ -2,6 +2,7 @@ package user
 
 import (
 	"forum/src/database"
+	"forum/src/dicts"
 	"forum/src/dicts/models"
 	"github.com/valyala/fasthttp"
 	"log"
@@ -35,11 +36,16 @@ func GetUserInfo(ctx *fasthttp.RequestCtx) {
 		// 400
 		return
 	}
-	user := &models.User{}
-	user.Nickname = args[2]
-	if err := database.DataManager.GetUserDB(user); err != nil {
-		println(err)
-		return
+	nickname := args[2]
+	user, err := database.DataManager.GetUserDB(nickname)
+	switch err {
+	case nil:
+		resp, _ := user.MarshalJSON()
+		dicts.MakeResponse(ctx, 200, resp)
+	case database.UserNotFound:
+		dicts.MakeResponse(ctx, 404, []byte(dicts.MakeErrorUser(nickname)))
+	default:
+		dicts.MakeResponse(ctx, 500, []byte(err.Error()))
 	}
 }
 
