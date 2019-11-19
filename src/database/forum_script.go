@@ -2,6 +2,12 @@ package database
 
 import "errors"
 
+var (
+	ForumIsExist          = errors.New("Forum was created earlier")
+	ForumNotFound         = errors.New("Forum not found")
+	ForumOrAuthorNotFound = errors.New("Forum or Author not found")
+)
+
 const (
 	createForumScript = `		
 		INSERT INTO forums (slug, title, "user")
@@ -14,10 +20,4 @@ const (
 		FROM forums
 		WHERE slug = $1
 	`
-)
-
-var (
-	ForumIsExist          = errors.New("Forum was created earlier")
-	ForumNotFound         = errors.New("Forum not found")
-	ForumOrAuthorNotFound = errors.New("Forum or Author not found")
 )

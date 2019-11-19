@@ -32,7 +32,6 @@ func (s service) CreateForumDB(forum *models.Forum) error {
 	default:
 		return err
 	}
-	return nil
 }
 
 func (s service) GetForumDB(slug string) (*models.Forum, error) {

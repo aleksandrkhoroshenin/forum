@@ -7,6 +7,7 @@ import (
 
 type UserDataManager interface {
 	CreateUserDB(user *models.User) ([]*models.User, error)
+	GetUserDB(user *models.User) error
 }
 
 func CreateUserInstance(conn *pgx.ConnPool) UserDataManager {
@@ -40,4 +41,14 @@ func (s service) CreateUserDB(user *models.User) (users []*models.User, err erro
 	}
 
 	return nil, nil
+}
+
+func (s service) GetUserDB(user *models.User) error {
+	err := s.conn.QueryRow(
+		getUserByNicknameOrEmailScript, &user.Nickname, &user.Email).Scan(&user)
+
+	if err != nil {
+		return err
+	}
+	return nil
 }

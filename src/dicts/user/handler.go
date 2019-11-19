@@ -31,12 +31,16 @@ func CreateUser(ctx *fasthttp.RequestCtx) {
 
 func GetUserInfo(ctx *fasthttp.RequestCtx) {
 	args := strings.Split(string(ctx.Request.RequestURI()), "/")
-	if len(args) < 3 {
+	if len(args) < 4 {
 		// 400
 		return
 	}
-	//nickname := args[1]
-
+	user := &models.User{}
+	user.Nickname = args[2]
+	if err := database.DataManager.GetUserDB(user); err != nil {
+		println(err)
+		return
+	}
 }
 
 func ChangeUserInfo(ctx *fasthttp.RequestCtx) {

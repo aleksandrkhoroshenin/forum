@@ -2,7 +2,9 @@ package initDB
 
 import (
 	"github.com/jackc/pgx"
-	_ "github.com/lib/pq"
+	"github.com/jackc/pgx/log/logrusadapter"
+	"github.com/sirupsen/logrus"
+	"github.com/x-cray/logrus-prefixed-formatter"
 	"log"
 )
 
@@ -24,6 +26,14 @@ func (db InitDB) GetConnPool() *pgx.ConnPool {
 }
 
 func (db *InitDB) DbConnect(host, database, user, password string, port uint16) (err error) {
+	l := logrus.New()
+	l.SetFormatter(&prefixed.TextFormatter{
+		DisableColors:   true,
+		TimestampFormat: "2006-01-02 15:04:05",
+		FullTimestamp:   true,
+		ForceFormatting: true,
+	})
+	logger := logrusadapter.NewLogger(l)
 	runtimeParams := make(map[string]string)
 	runtimeParams["application_name"] = "dz"
 	conConfig := pgx.ConnConfig{
@@ -35,6 +45,8 @@ func (db *InitDB) DbConnect(host, database, user, password string, port uint16) 
 		TLSConfig:      nil,
 		UseFallbackTLS: false,
 		RuntimeParams:  runtimeParams,
+		LogLevel:       5,
+		Logger:         logger,
 	}
 
 	poolConfig := pgx.ConnPoolConfig{
