@@ -57,6 +57,7 @@ func CreateForumBranch(w http.ResponseWriter, r *http.Request) {
 		dicts.MakeResponse(w, 400, errors.New("slug is empty! "))
 		return
 	}
+	//database.DataManager.CreateThreadDB()
 }
 
 func GetBranchThreads(w http.ResponseWriter, r *http.Request) {

@@ -15,34 +15,54 @@ func MakeResponse(w http.ResponseWriter, status int, resp interface{}) {
 	}
 }
 
-func MakeErrorUser(s string) string {
-	return fmt.Sprintf(`{"message": "Can't find user by nickname: %s"}`, s)
+type ErrorMessage struct {
+	Message string `json:"message"`
 }
 
-func MakeErrorEmail(s string) string {
-	return fmt.Sprintf(`{"message": "This email is already registered by user: %s"}`, s)
+func MakeErrorUser(s string) ErrorMessage {
+	return ErrorMessage{
+		Message: fmt.Sprintf("Can't find user by nickname: %s", s),
+	}
 }
 
-func MakeErrorForum(s string) string {
-	return fmt.Sprintf(`{"message": "Can't find forum with slug: %s"}`, s)
+func MakeErrorEmail(s string) ErrorMessage {
+	return ErrorMessage{
+		Message: fmt.Sprintf("This email is already registered by user: %s", s),
+	}
 }
 
-func MakeErrorThread(s string) string {
-	return fmt.Sprintf(`{"message": "Can't find thread by slug: %s"}`, s)
+func MakeErrorForum(s string) ErrorMessage {
+	return ErrorMessage{
+		Message: fmt.Sprintf("Can't find forum with slug: %s", s),
+	}
 }
 
-func MakeErrorThreadConflict() string {
-	return `{"message": "Parent post was created in another thread"}`
+func MakeErrorThread(s string) ErrorMessage {
+	return ErrorMessage{
+		Message: fmt.Sprintf("Can't find thread by slug: %s", s),
+	}
 }
 
-func MakeErrorThreadID(s string) string {
-	return fmt.Sprintf(`{"message": "Can't find thread by slug: %s"}`, s)
+func MakeErrorThreadConflict() ErrorMessage {
+	return ErrorMessage{
+		Message: "Parent post was created in another thread",
+	}
 }
 
-func MakeErrorPost(s string) string {
-	return fmt.Sprintf(`{"message": "Can't find post with id: %s"}`, s)
+func MakeErrorThreadID(s string) ErrorMessage {
+	return ErrorMessage{
+		Message: fmt.Sprintf("Can't find thread by slug: %s", s),
+	}
 }
 
-func MakeErrorPostAuthor(s string) string {
-	return fmt.Sprintf(`{"message": "Can't find post author by nickname: %s"}`, s)
+func MakeErrorPost(s string) ErrorMessage {
+	return ErrorMessage{
+		Message: fmt.Sprintf("Can't find post with id: %s", s),
+	}
+}
+
+func MakeErrorPostAuthor(s string) ErrorMessage {
+	return ErrorMessage{
+		Message: fmt.Sprintf("Can't find post author by nickname: %s", s),
+	}
 }

@@ -4,14 +4,25 @@ import "errors"
 
 const (
 	createThreadScript = `
-		INSERT
-		INTO users ("nickname", "fullname", "email", "about")
-		VALUES ($1, $2, $3, $4) ON CONFLICT DO NOTHING
+		INSERT INTO threads (author, created, message, title, slug, forum)
+		VALUES ($1, $2, $3, $4, $5, (SELECT slug FROM forums WHERE slug = $6)) 
+		RETURNING author, created, forum, id, message, title
 	`
-	getThreadByNicknameOrEmailScript = `
-		SELECT "nickname", "fullname", "email", "about"
-		FROM users
-		WHERE "nickname" = $1 OR "email" = $2
+
+	getForumThreadsScript = `
+		SELECT author, created, forum, id, message, slug, title, votes
+		FROM threads
+		WHERE forum = $1
+		ORDER BY created
+		LIMIT $2::TEXT::INTEGER
+	`
+
+	getThreadByForumAndCreatedScript = `
+		SELECT author, created, forum, id, message, slug, title, votes
+		FROM threads
+		WHERE forum = $1 AND created >= $2::TEXT::TIMESTAMPTZ
+		ORDER BY created
+		LIMIT $3::TEXT::INTEGER
 	`
 )
 

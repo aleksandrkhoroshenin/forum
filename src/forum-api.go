@@ -29,9 +29,8 @@ func main() {
 	database.CreateDataManagerInstance(db.GetConnPool())
 	r := router.CreateRouter()
 	srv := &http.Server{
-		Handler: r,
-		Addr:    "127.0.0.1" + httpAddr,
-		// Good practice: enforce timeouts for servers you create!
+		Handler:      r,
+		Addr:         "127.0.0.1" + httpAddr,
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,
 	}
