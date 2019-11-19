@@ -43,9 +43,15 @@ func (s service) CreateUserDB(user *models.User) (users []*models.User, err erro
 	return nil, nil
 }
 
-func (s service) GetUserDB(nickname string) (user *models.User, err error) {
-	err = s.conn.QueryRow(
-		getUserByNicknameOrEmailScript, &nickname).Scan(&user)
+func (s service) GetUserDB(nickname string) (*models.User, error) {
+	user := &models.User{}
+	err := s.conn.QueryRow(
+		getUserByNicknameScript, &nickname).Scan(
+		&user.Nickname,
+		&user.Fullname,
+		&user.Email,
+		&user.About,
+	)
 
 	if err != nil {
 		return nil, err

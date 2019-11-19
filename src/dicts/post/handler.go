@@ -1,11 +1,13 @@
 package post
 
-import "github.com/valyala/fasthttp"
+import (
+	"net/http"
+)
 
-func GetPostDetails(ctx *fasthttp.RequestCtx) {
+func GetPostDetails(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func ChangePostDetails(ctx *fasthttp.RequestCtx) {
+func ChangePostDetails(w http.ResponseWriter, r *http.Request) {
 
 }

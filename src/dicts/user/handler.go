@@ -1,54 +1,59 @@
 package user
 
 import (
+	"errors"
 	"forum/src/database"
 	"forum/src/dicts"
 	"forum/src/dicts/models"
-	"github.com/valyala/fasthttp"
+	"github.com/gorilla/mux"
+	"io/ioutil"
 	"log"
-	"strings"
+	"net/http"
 )
 
-func CreateUser(ctx *fasthttp.RequestCtx) {
-	args := strings.Split(string(ctx.Request.RequestURI()), "/")
-	if len(args) < 4 {
-		// 400
+func CreateUser(w http.ResponseWriter, r *http.Request) {
+	body, err := ioutil.ReadAll(r.Body)
+	defer r.Body.Close()
+	if err != nil {
+		dicts.MakeResponse(w, 500, err.Error())
 		return
 	}
-
-	println(ctx.Request.URI().QueryArgs().Peek("nickname"))
+	params := mux.Vars(r)
+	nickname := params["nickname"]
+	if nickname == "" {
+		dicts.MakeResponse(w, 400, errors.New("nickname is empty! "))
+		return
+	}
 	user := &models.User{}
-	err := user.UnmarshalJSON(ctx.Request.Body())
-	user.Nickname = args[2]
-
+	err = user.UnmarshalJSON(body)
 	if err != nil {
 		return
 	}
+	user.Nickname = nickname
 	if users, err := database.DataManager.CreateUserDB(user); err != nil {
 		log.Println(users, err)
 		return
 	}
 }
 
-func GetUserInfo(ctx *fasthttp.RequestCtx) {
-	args := strings.Split(string(ctx.Request.RequestURI()), "/")
-	if len(args) < 4 {
-		// 400
+func GetUserInfo(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+	nickname := params["nickname"]
+	if nickname == "" {
+		dicts.MakeResponse(w, 400, errors.New("nickname is empty! "))
 		return
 	}
-	nickname := args[2]
 	user, err := database.DataManager.GetUserDB(nickname)
 	switch err {
 	case nil:
-		resp, _ := user.MarshalJSON()
-		dicts.MakeResponse(ctx, 200, resp)
+		dicts.MakeResponse(w, 200, user)
 	case database.UserNotFound:
-		dicts.MakeResponse(ctx, 404, []byte(dicts.MakeErrorUser(nickname)))
+		dicts.MakeResponse(w, 404, dicts.MakeErrorUser(nickname))
 	default:
-		dicts.MakeResponse(ctx, 500, []byte(err.Error()))
+		dicts.MakeResponse(w, 500, err.Error())
 	}
 }
 
-func ChangeUserInfo(ctx *fasthttp.RequestCtx) {
-	ctx.FormValue("")
+func ChangeUserInfo(w http.ResponseWriter, r *http.Request) {
+
 }

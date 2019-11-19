@@ -3,15 +3,15 @@ package dicts
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/valyala/fasthttp"
+	"net/http"
 )
 
-func MakeResponse(ctx *fasthttp.RequestCtx, status int, resp interface{}) {
-	ctx.Response.Header.Add("Content-Type", "application/json")
-	ctx.SetStatusCode(status)
-	if err := json.NewEncoder(ctx).Encode(resp); err != nil {
+func MakeResponse(w http.ResponseWriter, status int, resp interface{}) {
+	w.Header().Add("Content-Type", "application/json")
+	w.WriteHeader(status)
+	if err := json.NewEncoder(w).Encode(resp); err != nil {
 		println(err)
-		ctx.Error(err.Error(), fasthttp.StatusInternalServerError)
+		w.WriteHeader(http.StatusInternalServerError)
 	}
 }
 

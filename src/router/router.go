@@ -6,31 +6,31 @@ import (
 	"forum/src/dicts/post"
 	"forum/src/dicts/thread"
 	"forum/src/dicts/user"
-	"github.com/buaazp/fasthttprouter"
+	"github.com/gorilla/mux"
 )
 
-func CreateRouter() *fasthttprouter.Router {
-	router := fasthttprouter.New()
-	router.POST("/forum/create", forum.CreateForum)
-	router.POST("/forum/{slug}/create", forum.CreateForumBranch)
-	router.GET("/forum/:slug/details", forum.GetBranchDetails)
-	router.GET("/forum/:slug/threads", forum.GetBranchThreads)
-	router.GET("/forum/:slug/users", forum.GetBranchUsers)
+func CreateRouter() *mux.Router {
+	router := mux.NewRouter()
+	router.HandleFunc("/forum/create", forum.CreateForum).Methods("POST")
+	router.HandleFunc("/forum/{slug}/create", forum.CreateForumBranch).Methods("POST")
+	router.HandleFunc("/forum/{slug}/details", forum.GetBranchDetails).Methods("GET")
+	router.HandleFunc("/forum/{slug}/threads", forum.GetBranchThreads).Methods("GET")
+	router.HandleFunc("/forum/{slug}/users", forum.GetBranchUsers).Methods("GET")
 
-	router.POST("/post/:id/details", post.ChangePostDetails)
-	router.GET("/post/:id/details", post.GetPostDetails)
+	router.HandleFunc("/post/{id}/details", post.ChangePostDetails).Methods("POST")
+	router.HandleFunc("/post/{id}/details", post.GetPostDetails).Methods("GET")
 
-	router.POST("/service/clear", database.ClearDB)
-	router.GET("/service/status", database.GetInformationDB)
+	router.HandleFunc("/service/clear", database.ClearDB).Methods("POST")
+	router.HandleFunc("/service/status", database.GetInformationDB).Methods("GET")
 
-	router.POST("/user/:nickname/create", user.CreateUser)
-	router.GET("/user/:nickname/profile", user.GetUserInfo)
-	router.POST("/user/:nickname/profile", user.ChangeUserInfo)
+	router.HandleFunc("/user/{nickname}/create", user.CreateUser).Methods("POST")
+	router.HandleFunc("/user/{nickname}/profile", user.GetUserInfo).Methods("GET")
+	router.HandleFunc("/user/{nickname}/profile", user.ChangeUserInfo).Methods("POST")
 
-	router.POST("/thread/:slug_or_id/create", thread.CreateThread)
-	router.GET("/thread/:slug_or_id/details", thread.CreateThreadBranch)
-	router.POST("/thread/:slug_or_id/details", thread.ChangeBranchDetails)
-	router.GET("/thread/:slug_or_id/posts", thread.GetPostFromBranch)
-	router.POST("/thread/:slug_or_id/vote", thread.ChangeVoteForBranch)
+	router.HandleFunc("/thread/{slug_or_id}/create", thread.CreateThread).Methods("POST")
+	router.HandleFunc("/thread/{slug_or_id}/details", thread.CreateThreadBranch).Methods("GET")
+	router.HandleFunc("/thread/{slug_or_id}/details", thread.ChangeBranchDetails).Methods("POST")
+	router.HandleFunc("/thread/{slug_or_id}/posts", thread.GetPostFromBranch).Methods("GET")
+	router.HandleFunc("/thread/{slug_or_id}/vote", thread.ChangeVoteForBranch).Methods("POST")
 	return router
 }

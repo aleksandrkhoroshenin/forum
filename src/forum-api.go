@@ -5,10 +5,11 @@ import (
 	"forum/src/database"
 	"forum/src/initDB"
 	"forum/src/router"
-	"github.com/valyala/fasthttp"
 	"log"
+	"net/http"
 	"os"
 	"strconv"
+	"time"
 )
 
 func main() {
@@ -27,8 +28,15 @@ func main() {
 	}
 	database.CreateDataManagerInstance(db.GetConnPool())
 	r := router.CreateRouter()
+	srv := &http.Server{
+		Handler: r,
+		Addr:    "127.0.0.1" + httpAddr,
+		// Good practice: enforce timeouts for servers you create!
+		WriteTimeout: 15 * time.Second,
+		ReadTimeout:  15 * time.Second,
+	}
 	println("Listen and Serve " + httpAddr)
-	if err := fasthttp.ListenAndServe(httpAddr, r.Handler); err != nil {
+	if err := srv.ListenAndServe(); err != nil {
 		log.Println(err)
 		os.Exit(1)
 	}

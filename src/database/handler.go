@@ -2,7 +2,7 @@ package database
 
 import (
 	"github.com/jackc/pgx"
-	"github.com/valyala/fasthttp"
+	"net/http"
 )
 
 type IDataManager struct {
@@ -25,10 +25,10 @@ func CreateDataManagerInstance(conn *pgx.ConnPool) {
 	DataManager.PostDataManager = CreatePostInstance(conn)
 }
 
-func ClearDB(ctx *fasthttp.RequestCtx) {
+func ClearDB(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func GetInformationDB(ctx *fasthttp.RequestCtx) {
+func GetInformationDB(w http.ResponseWriter, r *http.Request) {
 
 }
