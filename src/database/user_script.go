@@ -18,6 +18,16 @@ const (
 		FROM users
 		WHERE "nickname" = $1
 	`
+
+	getForumUsersSinceScript = `
+		SELECT nickname, fullname, about, email
+		FROM users
+		WHERE nickname IN (
+				SELECT forum_user FROM forum_users WHERE forum = $1
+			) 
+		ORDER BY nickname $2
+		LIMIT $3
+	`
 )
 
 var (

@@ -11,3 +11,5 @@ type User struct {
 	Fullname string       `json:"fullname"`
 	Nickname string       `json:"nickname,omitempty"`
 }
+
+type Users []*User

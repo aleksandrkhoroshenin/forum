@@ -1,13 +1,15 @@
 package database
 
 import (
+	"forum/src/dicts"
 	"forum/src/dicts/models"
 	"github.com/jackc/pgx"
 )
 
 type UserDataManager interface {
-	CreateUserDB(user *models.User) ([]*models.User, error)
+	CreateUserDB(user *models.User) (err error)
 	GetUserDB(nickname string) (user *models.User, err error)
+	GetForumUsersDB(slug string, query dicts.QueryParams) ([]*models.User, error)
 }
 
 func CreateUserInstance(conn *pgx.ConnPool) UserDataManager {
@@ -16,7 +18,7 @@ func CreateUserInstance(conn *pgx.ConnPool) UserDataManager {
 	}
 }
 
-func (s service) CreateUserDB(user *models.User) (users []*models.User, err error) {
+func (s service) CreateUserDB(user *models.User) (err error) {
 	rows, err := s.conn.Exec(
 		createUserScript,
 		&user.Nickname,
@@ -25,7 +27,7 @@ func (s service) CreateUserDB(user *models.User) (users []*models.User, err erro
 		&user.About,
 	)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	if rows.RowsAffected() == 0 { // пользователь уже есть
@@ -34,13 +36,13 @@ func (s service) CreateUserDB(user *models.User) (users []*models.User, err erro
 			getUserByNicknameOrEmailScript, &user.Nickname, &user.Email).Scan(&user)
 
 		if err != nil {
-			return nil, err
+			return err
 		}
 
-		return users, UserIsExist
+		return UserIsExist
 	}
 
-	return nil, nil
+	return nil
 }
 
 func (s service) GetUserDB(nickname string) (*models.User, error) {
@@ -57,4 +59,10 @@ func (s service) GetUserDB(nickname string) (*models.User, error) {
 		return nil, err
 	}
 	return user, nil
+}
+
+func (s service) GetForumUsersDB(slug string, query dicts.QueryParams) ([]*models.User, error) {
+	users := make([]*models.User, 0)
+	_, err := s.conn.Query(getForumUsersSinceScript, slug, query.Desc, query.Limit)
+	return users, err
 }

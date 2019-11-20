@@ -7,7 +7,6 @@ import (
 	"forum/src/dicts/models"
 	"github.com/gorilla/mux"
 	"io/ioutil"
-	"log"
 	"net/http"
 )
 
@@ -15,13 +14,13 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	body, err := ioutil.ReadAll(r.Body)
 	defer r.Body.Close()
 	if err != nil {
-		dicts.MakeResponse(w, 500, err.Error())
+		dicts.JsonResponse(w, 500, err.Error())
 		return
 	}
 	params := mux.Vars(r)
 	nickname := params["nickname"]
 	if nickname == "" {
-		dicts.MakeResponse(w, 400, errors.New("nickname is empty! "))
+		dicts.JsonResponse(w, 400, errors.New("nickname is empty! "))
 		return
 	}
 	user := &models.User{}
@@ -30,9 +29,15 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	user.Nickname = nickname
-	if users, err := database.DataManager.CreateUserDB(user); err != nil {
-		log.Println(users, err)
-		return
+	err = database.DataManager.CreateUserDB(user)
+
+	switch err {
+	case nil:
+		dicts.JsonResponse(w, 201, user)
+	case database.UserIsExist:
+		dicts.JsonResponse(w, 409, user)
+	default:
+		dicts.JsonResponse(w, 500, err.Error())
 	}
 }
 
@@ -40,17 +45,17 @@ func GetUserInfo(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	nickname := params["nickname"]
 	if nickname == "" {
-		dicts.MakeResponse(w, 400, errors.New("nickname is empty! "))
+		dicts.JsonResponse(w, 400, errors.New("nickname is empty! "))
 		return
 	}
 	user, err := database.DataManager.GetUserDB(nickname)
 	switch err {
 	case nil:
-		dicts.MakeResponse(w, 200, user)
+		dicts.JsonResponse(w, 200, user)
 	case database.UserNotFound:
-		dicts.MakeResponse(w, 404, dicts.MakeErrorUser(nickname))
+		dicts.JsonResponse(w, 404, dicts.ErrorFindUserByNick(nickname))
 	default:
-		dicts.MakeResponse(w, 500, err.Error())
+		dicts.JsonResponse(w, 500, err.Error())
 	}
 }
 

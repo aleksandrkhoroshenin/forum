@@ -18,3 +18,5 @@ type Post struct {
 	Parent   int64     `json:"parent,omitempty"`
 	Thread   int32     `json:"thread,omitempty"`
 }
+
+type Posts []*Post

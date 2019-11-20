@@ -24,6 +24,19 @@ const (
 		ORDER BY created
 		LIMIT $3::TEXT::INTEGER
 	`
+
+	getForumThreadsSinceScript = `
+		SELECT author, created, forum, id, message, slug, title, votes
+		FROM threads
+		WHERE forum = $1 AND created <= $2::TEXT::TIMESTAMPTZ
+		ORDER BY created DESC
+		LIMIT $3
+	`
+	getThreadBySlugScript = `
+		SELECT author, created, forum, id, message, slug, title, votes
+		FROM threads
+		WHERE {columnName} = $1
+	`
 )
 
 var (

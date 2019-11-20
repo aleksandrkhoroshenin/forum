@@ -27,10 +27,10 @@ func CreateRouter() *mux.Router {
 	router.HandleFunc("/user/{nickname}/profile", user.GetUserInfo).Methods("GET")
 	router.HandleFunc("/user/{nickname}/profile", user.ChangeUserInfo).Methods("POST")
 
-	router.HandleFunc("/thread/{slug_or_id}/create", thread.CreateThread).Methods("POST")
-	router.HandleFunc("/thread/{slug_or_id}/details", thread.CreateThreadBranch).Methods("GET")
-	router.HandleFunc("/thread/{slug_or_id}/details", thread.ChangeBranchDetails).Methods("POST")
-	router.HandleFunc("/thread/{slug_or_id}/posts", thread.GetPostFromBranch).Methods("GET")
+	router.HandleFunc("/thread/{slug_or_id}/create", thread.CreateThreadPost).Methods("POST")
+	router.HandleFunc("/thread/{slug_or_id}/details", thread.GetThreadDetails).Methods("GET")
+	router.HandleFunc("/thread/{slug_or_id}/details", thread.ChangeThreadDetails).Methods("POST")
+	router.HandleFunc("/thread/{slug_or_id}/posts", thread.GetPostsFromBranch).Methods("GET")
 	router.HandleFunc("/thread/{slug_or_id}/vote", thread.ChangeVoteForBranch).Methods("POST")
 	return router
 }
