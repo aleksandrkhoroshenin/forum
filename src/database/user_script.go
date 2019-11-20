@@ -28,6 +28,15 @@ const (
 		ORDER BY nickname DESC
 		LIMIT $2
 	`
+	updateUserScript = `
+		UPDATE users
+		SET fullname = coalesce(nullif($1, ''), fullname),
+			email = coalesce(nullif($2, ''), email),
+			about = coalesce(nullif($3, ''), about),
+			nickname = coalesce(nullif($4, ''), nickname)
+		WHERE "nickname" = $5
+		RETURNING nickname, fullname, email, about
+	`
 )
 
 var (

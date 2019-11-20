@@ -10,6 +10,7 @@ import (
 type UserDataManager interface {
 	CreateUserDB(user *models.User) (err error)
 	GetUserDB(nickname string) (user *models.User, err error)
+	UpdateUserDB(nickname string, user *models.User) error
 	GetForumUsersDB(slug string, query dicts.QueryParams) ([]*models.User, error)
 }
 
@@ -98,4 +99,29 @@ func (s service) GetForumUsersDB(slug string, query dicts.QueryParams) ([]*model
 		}
 	}
 	return users, err
+}
+
+func (s service) UpdateUserDB(nickname string, user *models.User) error {
+	err := s.conn.QueryRow(
+		updateUserScript,
+		&user.Fullname,
+		&user.Email,
+		&user.About,
+		&user.Nickname,
+		&nickname,
+	).Scan(
+		&user.Nickname,
+		&user.Fullname,
+		&user.Email,
+		&user.About,
+	)
+
+	if err != nil {
+		if ErrorCode(err) != pgxOK {
+			return UserUpdateConflict
+		}
+		return UserNotFound
+	}
+
+	return nil
 }
