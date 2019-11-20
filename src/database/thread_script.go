@@ -28,10 +28,11 @@ const (
 	getForumThreadsSinceScript = `
 		SELECT author, created, forum, id, message, slug, title, votes
 		FROM threads
-		WHERE forum = $1 AND created <= $2::TEXT::TIMESTAMPTZ
+		WHERE forum = $1 {sinceQuery}
 		ORDER BY created DESC
-		LIMIT $3
+		LIMIT {limit}
 	`
+	sinceQuery            = ` AND created <= $2::TEXT::TIMESTAMPTZ `
 	getThreadBySlugScript = `
 		SELECT author, created, forum, id, message, slug, title, votes
 		FROM threads

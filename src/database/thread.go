@@ -84,12 +84,21 @@ func (s service) CreateThreadDB(thread *models.Thread) (err error) {
 }
 
 func (s service) GetForumThreads(slug string, query dicts.QueryParams) ([]*models.Thread, error) {
+	var rows *pgx.Rows
+	var err error
 	threads := make([]*models.Thread, 0)
 	sqlRequest := getForumThreadsSinceScript
+	sqlRequest = strings.Replace(sqlRequest, "{limit}", query.Limit, -1)
 	if query.Desc == "" {
-		sqlRequest = strings.Replace(getForumThreadsSinceScript, "DESC", "", -1)
+		sqlRequest = strings.Replace(sqlRequest, "DESC", "", -1)
 	}
-	rows, err := s.conn.Query(sqlRequest, &slug, &query.Since, &query.Limit)
+	if query.Since == "" {
+		sqlRequest = strings.Replace(sqlRequest, "{sinceQuery}", "", -1)
+		rows, err = s.conn.Query(sqlRequest, &slug)
+	} else {
+		sqlRequest = strings.Replace(sqlRequest, "{sinceQuery}", sinceQuery, -1)
+		rows, err = s.conn.Query(sqlRequest, &slug, &query.Since)
+	}
 	if rows == nil {
 		return nil, errors.New("rows is nil")
 	}

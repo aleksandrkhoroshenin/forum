@@ -25,8 +25,8 @@ const (
 		WHERE nickname IN (
 				SELECT forum_user FROM forum_users WHERE forum = $1
 			) 
-		ORDER BY nickname $2
-		LIMIT $3
+		ORDER BY nickname DESC
+		LIMIT $2
 	`
 )
 
