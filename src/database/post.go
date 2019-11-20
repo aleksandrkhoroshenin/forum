@@ -7,6 +7,7 @@ import (
 )
 
 type PostDataManager interface {
+	CreatePostDB(slugOrID string, post *models.Post) error
 	GetPostDB(id int) (*models.Post, error)
 	UpdatePostDB(postUpdate *models.PostUpdate, id int) (*models.Post, error)
 }
@@ -72,4 +73,13 @@ func (s service) GetPostDB(id int) (*models.Post, error) {
 	} else {
 		return nil, err
 	}
+}
+
+func (s service) CreatePostDB(slugOrID string, post *models.Post) error {
+	//thread, err := s.GetThreadDB(slugOrID)
+	//if err != nil {
+	//	return err
+	//}
+	//_, err := s.conn.Exec()
+	return nil
 }
