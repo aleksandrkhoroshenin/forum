@@ -12,4 +12,5 @@ type User struct {
 	Nickname string       `json:"nickname,omitempty"`
 }
 
+//easyjson:json
 type Users []*User

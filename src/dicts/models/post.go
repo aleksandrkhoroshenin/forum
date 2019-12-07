@@ -19,4 +19,5 @@ type Post struct {
 	Thread   int32     `json:"thread,omitempty"`
 }
 
+//easyjson:json
 type Posts []*Post

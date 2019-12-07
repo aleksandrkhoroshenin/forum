@@ -62,29 +62,92 @@ func GetThreadDetails(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// /thread/{slug_or_id}/details
 func ChangeThreadDetails(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
-	slug := params["slug_or_id"]
-	if slug == "" {
-		dicts.JsonResponse(w, 400, errors.New("slug_or_id is empty! "))
+	param := params["slug_or_id"]
+
+	body, err := ioutil.ReadAll(r.Body)
+	defer r.Body.Close()
+	if err != nil {
+		dicts.JsonResponse(w, 500, []byte(err.Error()))
 		return
+	}
+	threadUpdate := &models.ThreadUpdate{}
+	err = threadUpdate.UnmarshalJSON(body)
+
+	//err = forum.Validate()
+	if err != nil {
+		dicts.JsonResponse(w, 500, []byte(err.Error()))
+		return
+	}
+
+	result, err := database.DataManager.UpdateThreadDB(threadUpdate, param)
+
+	switch err {
+	case nil:
+		resp, _ := result.MarshalJSON()
+		dicts.JsonResponse(w, 200, resp)
+	case database.PostNotFound:
+		dicts.JsonResponse(w, 404, dicts.ErrorThread(param))
+	default:
+		dicts.JsonResponse(w, 500, err.Error())
 	}
 }
 
+// /thread/{slug_or_id}/posts
 func GetPostsFromBranch(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
-	slug := params["slug_or_id"]
-	if slug == "" {
-		dicts.JsonResponse(w, 400, errors.New("slug_or_id is empty! "))
-		return
+	param := params["slug_or_id"]
+	queryParams := r.URL.Query()
+	var limit, since, sort, desc string
+	if limit = queryParams.Get("limit"); limit == "" {
+		limit = "1"
+	}
+	since = queryParams.Get("since")
+	if sort = queryParams.Get("sort"); sort == "" {
+		sort = "flat"
+	}
+	if desc = queryParams.Get("desc"); desc == "" {
+		desc = "false"
+	}
+	result, err := database.DataManager.GetThreadPostsDB(param, limit, since, sort, desc)
+
+	switch err {
+	case nil:
+		resp, _ := result.MarshalJSON()
+		dicts.JsonResponse(w, 200, resp)
+	case database.ForumNotFound:
+		dicts.JsonResponse(w, 404, dicts.ErrorThread(param))
+	default:
+		dicts.JsonResponse(w, 500, err.Error())
 	}
 }
 
+// /thread/{slug_or_id}/vote
 func ChangeVoteForBranch(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
-	slug := params["slug_or_id"]
-	if slug == "" {
-		dicts.JsonResponse(w, 400, errors.New("slug_or_id is empty! "))
+	param := params["slug_or_id"]
+	body, err := ioutil.ReadAll(r.Body)
+	defer r.Body.Close()
+	if err != nil {
+		dicts.JsonResponse(w, 500, []byte(err.Error()))
 		return
+	}
+	vote := &models.Vote{}
+	err = vote.UnmarshalJSON(body)
+
+	result, err := database.DataManager.MakeThreadVoteDB(vote, param)
+
+	switch err {
+	case nil:
+		resp, _ := result.MarshalJSON()
+		dicts.JsonResponse(w, 200, resp)
+	case database.ForumNotFound:
+		dicts.JsonResponse(w, 404, dicts.ErrorThread(param))
+	case database.UserNotFound:
+		dicts.JsonResponse(w, 404, dicts.ErrorFindUserByNick(param))
+	default:
+		dicts.JsonResponse(w, 500, err.Error())
 	}
 }

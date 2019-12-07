@@ -10,6 +10,7 @@ import (
 	"net/http"
 )
 
+// /user/{nickname}/create
 func CreateUser(w http.ResponseWriter, r *http.Request) {
 	body, err := ioutil.ReadAll(r.Body)
 	defer r.Body.Close()
@@ -41,6 +42,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// /user/{nickname}/profile
 func GetUserInfo(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	nickname := params["nickname"]
@@ -59,6 +61,7 @@ func GetUserInfo(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// /user/{nickname}/profile
 func ChangeUserInfo(w http.ResponseWriter, r *http.Request) {
 	body, err := ioutil.ReadAll(r.Body)
 	defer r.Body.Close()

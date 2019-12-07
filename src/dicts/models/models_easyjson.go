@@ -90,7 +90,85 @@ func (v *Vote) UnmarshalJSON(data []byte) error {
 func (v *Vote) UnmarshalEasyJSON(l *jlexer.Lexer) {
 	easyjsonD2b7633eDecodeForumSrcDictsModels(l, v)
 }
-func easyjsonD2b7633eDecodeForumSrcDictsModels1(in *jlexer.Lexer, out *UserUpdate) {
+func easyjsonD2b7633eDecodeForumSrcDictsModels1(in *jlexer.Lexer, out *Users) {
+	isTopLevel := in.IsStart()
+	if in.IsNull() {
+		in.Skip()
+		*out = nil
+	} else {
+		in.Delim('[')
+		if *out == nil {
+			if !in.IsDelim(']') {
+				*out = make(Users, 0, 8)
+			} else {
+				*out = Users{}
+			}
+		} else {
+			*out = (*out)[:0]
+		}
+		for !in.IsDelim(']') {
+			var v1 *User
+			if in.IsNull() {
+				in.Skip()
+				v1 = nil
+			} else {
+				if v1 == nil {
+					v1 = new(User)
+				}
+				(*v1).UnmarshalEasyJSON(in)
+			}
+			*out = append(*out, v1)
+			in.WantComma()
+		}
+		in.Delim(']')
+	}
+	if isTopLevel {
+		in.Consumed()
+	}
+}
+func easyjsonD2b7633eEncodeForumSrcDictsModels1(out *jwriter.Writer, in Users) {
+	if in == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
+		out.RawString("null")
+	} else {
+		out.RawByte('[')
+		for v2, v3 := range in {
+			if v2 > 0 {
+				out.RawByte(',')
+			}
+			if v3 == nil {
+				out.RawString("null")
+			} else {
+				(*v3).MarshalEasyJSON(out)
+			}
+		}
+		out.RawByte(']')
+	}
+}
+
+// MarshalJSON supports json.Marshaler interface
+func (v Users) MarshalJSON() ([]byte, error) {
+	w := jwriter.Writer{}
+	easyjsonD2b7633eEncodeForumSrcDictsModels1(&w, v)
+	return w.Buffer.BuildBytes(), w.Error
+}
+
+// MarshalEasyJSON supports easyjson.Marshaler interface
+func (v Users) MarshalEasyJSON(w *jwriter.Writer) {
+	easyjsonD2b7633eEncodeForumSrcDictsModels1(w, v)
+}
+
+// UnmarshalJSON supports json.Unmarshaler interface
+func (v *Users) UnmarshalJSON(data []byte) error {
+	r := jlexer.Lexer{Data: data}
+	easyjsonD2b7633eDecodeForumSrcDictsModels1(&r, v)
+	return r.Error()
+}
+
+// UnmarshalEasyJSON supports easyjson.Unmarshaler interface
+func (v *Users) UnmarshalEasyJSON(l *jlexer.Lexer) {
+	easyjsonD2b7633eDecodeForumSrcDictsModels1(l, v)
+}
+func easyjsonD2b7633eDecodeForumSrcDictsModels2(in *jlexer.Lexer, out *UserUpdate) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -127,7 +205,7 @@ func easyjsonD2b7633eDecodeForumSrcDictsModels1(in *jlexer.Lexer, out *UserUpdat
 		in.Consumed()
 	}
 }
-func easyjsonD2b7633eEncodeForumSrcDictsModels1(out *jwriter.Writer, in UserUpdate) {
+func easyjsonD2b7633eEncodeForumSrcDictsModels2(out *jwriter.Writer, in UserUpdate) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -163,27 +241,27 @@ func easyjsonD2b7633eEncodeForumSrcDictsModels1(out *jwriter.Writer, in UserUpda
 // MarshalJSON supports json.Marshaler interface
 func (v UserUpdate) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjsonD2b7633eEncodeForumSrcDictsModels1(&w, v)
+	easyjsonD2b7633eEncodeForumSrcDictsModels2(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v UserUpdate) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjsonD2b7633eEncodeForumSrcDictsModels1(w, v)
+	easyjsonD2b7633eEncodeForumSrcDictsModels2(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *UserUpdate) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjsonD2b7633eDecodeForumSrcDictsModels1(&r, v)
+	easyjsonD2b7633eDecodeForumSrcDictsModels2(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *UserUpdate) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjsonD2b7633eDecodeForumSrcDictsModels1(l, v)
+	easyjsonD2b7633eDecodeForumSrcDictsModels2(l, v)
 }
-func easyjsonD2b7633eDecodeForumSrcDictsModels2(in *jlexer.Lexer, out *User) {
+func easyjsonD2b7633eDecodeForumSrcDictsModels3(in *jlexer.Lexer, out *User) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -222,7 +300,7 @@ func easyjsonD2b7633eDecodeForumSrcDictsModels2(in *jlexer.Lexer, out *User) {
 		in.Consumed()
 	}
 }
-func easyjsonD2b7633eEncodeForumSrcDictsModels2(out *jwriter.Writer, in User) {
+func easyjsonD2b7633eEncodeForumSrcDictsModels3(out *jwriter.Writer, in User) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -258,27 +336,27 @@ func easyjsonD2b7633eEncodeForumSrcDictsModels2(out *jwriter.Writer, in User) {
 // MarshalJSON supports json.Marshaler interface
 func (v User) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjsonD2b7633eEncodeForumSrcDictsModels2(&w, v)
+	easyjsonD2b7633eEncodeForumSrcDictsModels3(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v User) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjsonD2b7633eEncodeForumSrcDictsModels2(w, v)
+	easyjsonD2b7633eEncodeForumSrcDictsModels3(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *User) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjsonD2b7633eDecodeForumSrcDictsModels2(&r, v)
+	easyjsonD2b7633eDecodeForumSrcDictsModels3(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *User) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjsonD2b7633eDecodeForumSrcDictsModels2(l, v)
+	easyjsonD2b7633eDecodeForumSrcDictsModels3(l, v)
 }
-func easyjsonD2b7633eDecodeForumSrcDictsModels3(in *jlexer.Lexer, out *ThreadUpdate) {
+func easyjsonD2b7633eDecodeForumSrcDictsModels4(in *jlexer.Lexer, out *ThreadUpdate) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -311,7 +389,7 @@ func easyjsonD2b7633eDecodeForumSrcDictsModels3(in *jlexer.Lexer, out *ThreadUpd
 		in.Consumed()
 	}
 }
-func easyjsonD2b7633eEncodeForumSrcDictsModels3(out *jwriter.Writer, in ThreadUpdate) {
+func easyjsonD2b7633eEncodeForumSrcDictsModels4(out *jwriter.Writer, in ThreadUpdate) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -337,27 +415,27 @@ func easyjsonD2b7633eEncodeForumSrcDictsModels3(out *jwriter.Writer, in ThreadUp
 // MarshalJSON supports json.Marshaler interface
 func (v ThreadUpdate) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjsonD2b7633eEncodeForumSrcDictsModels3(&w, v)
+	easyjsonD2b7633eEncodeForumSrcDictsModels4(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v ThreadUpdate) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjsonD2b7633eEncodeForumSrcDictsModels3(w, v)
+	easyjsonD2b7633eEncodeForumSrcDictsModels4(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *ThreadUpdate) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjsonD2b7633eDecodeForumSrcDictsModels3(&r, v)
+	easyjsonD2b7633eDecodeForumSrcDictsModels4(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *ThreadUpdate) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjsonD2b7633eDecodeForumSrcDictsModels3(l, v)
+	easyjsonD2b7633eDecodeForumSrcDictsModels4(l, v)
 }
-func easyjsonD2b7633eDecodeForumSrcDictsModels4(in *jlexer.Lexer, out *Thread) {
+func easyjsonD2b7633eDecodeForumSrcDictsModels5(in *jlexer.Lexer, out *Thread) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -404,7 +482,7 @@ func easyjsonD2b7633eDecodeForumSrcDictsModels4(in *jlexer.Lexer, out *Thread) {
 		in.Consumed()
 	}
 }
-func easyjsonD2b7633eEncodeForumSrcDictsModels4(out *jwriter.Writer, in Thread) {
+func easyjsonD2b7633eEncodeForumSrcDictsModels5(out *jwriter.Writer, in Thread) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -454,27 +532,27 @@ func easyjsonD2b7633eEncodeForumSrcDictsModels4(out *jwriter.Writer, in Thread) 
 // MarshalJSON supports json.Marshaler interface
 func (v Thread) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjsonD2b7633eEncodeForumSrcDictsModels4(&w, v)
+	easyjsonD2b7633eEncodeForumSrcDictsModels5(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v Thread) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjsonD2b7633eEncodeForumSrcDictsModels4(w, v)
+	easyjsonD2b7633eEncodeForumSrcDictsModels5(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *Thread) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjsonD2b7633eDecodeForumSrcDictsModels4(&r, v)
+	easyjsonD2b7633eDecodeForumSrcDictsModels5(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *Thread) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjsonD2b7633eDecodeForumSrcDictsModels4(l, v)
+	easyjsonD2b7633eDecodeForumSrcDictsModels5(l, v)
 }
-func easyjsonD2b7633eDecodeForumSrcDictsModels5(in *jlexer.Lexer, out *Status) {
+func easyjsonD2b7633eDecodeForumSrcDictsModels6(in *jlexer.Lexer, out *Status) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -511,7 +589,7 @@ func easyjsonD2b7633eDecodeForumSrcDictsModels5(in *jlexer.Lexer, out *Status) {
 		in.Consumed()
 	}
 }
-func easyjsonD2b7633eEncodeForumSrcDictsModels5(out *jwriter.Writer, in Status) {
+func easyjsonD2b7633eEncodeForumSrcDictsModels6(out *jwriter.Writer, in Status) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -541,27 +619,105 @@ func easyjsonD2b7633eEncodeForumSrcDictsModels5(out *jwriter.Writer, in Status) 
 // MarshalJSON supports json.Marshaler interface
 func (v Status) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjsonD2b7633eEncodeForumSrcDictsModels5(&w, v)
+	easyjsonD2b7633eEncodeForumSrcDictsModels6(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v Status) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjsonD2b7633eEncodeForumSrcDictsModels5(w, v)
+	easyjsonD2b7633eEncodeForumSrcDictsModels6(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *Status) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjsonD2b7633eDecodeForumSrcDictsModels5(&r, v)
+	easyjsonD2b7633eDecodeForumSrcDictsModels6(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *Status) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjsonD2b7633eDecodeForumSrcDictsModels5(l, v)
+	easyjsonD2b7633eDecodeForumSrcDictsModels6(l, v)
 }
-func easyjsonD2b7633eDecodeForumSrcDictsModels6(in *jlexer.Lexer, out *PostUpdate) {
+func easyjsonD2b7633eDecodeForumSrcDictsModels7(in *jlexer.Lexer, out *Posts) {
+	isTopLevel := in.IsStart()
+	if in.IsNull() {
+		in.Skip()
+		*out = nil
+	} else {
+		in.Delim('[')
+		if *out == nil {
+			if !in.IsDelim(']') {
+				*out = make(Posts, 0, 8)
+			} else {
+				*out = Posts{}
+			}
+		} else {
+			*out = (*out)[:0]
+		}
+		for !in.IsDelim(']') {
+			var v4 *Post
+			if in.IsNull() {
+				in.Skip()
+				v4 = nil
+			} else {
+				if v4 == nil {
+					v4 = new(Post)
+				}
+				(*v4).UnmarshalEasyJSON(in)
+			}
+			*out = append(*out, v4)
+			in.WantComma()
+		}
+		in.Delim(']')
+	}
+	if isTopLevel {
+		in.Consumed()
+	}
+}
+func easyjsonD2b7633eEncodeForumSrcDictsModels7(out *jwriter.Writer, in Posts) {
+	if in == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
+		out.RawString("null")
+	} else {
+		out.RawByte('[')
+		for v5, v6 := range in {
+			if v5 > 0 {
+				out.RawByte(',')
+			}
+			if v6 == nil {
+				out.RawString("null")
+			} else {
+				(*v6).MarshalEasyJSON(out)
+			}
+		}
+		out.RawByte(']')
+	}
+}
+
+// MarshalJSON supports json.Marshaler interface
+func (v Posts) MarshalJSON() ([]byte, error) {
+	w := jwriter.Writer{}
+	easyjsonD2b7633eEncodeForumSrcDictsModels7(&w, v)
+	return w.Buffer.BuildBytes(), w.Error
+}
+
+// MarshalEasyJSON supports easyjson.Marshaler interface
+func (v Posts) MarshalEasyJSON(w *jwriter.Writer) {
+	easyjsonD2b7633eEncodeForumSrcDictsModels7(w, v)
+}
+
+// UnmarshalJSON supports json.Unmarshaler interface
+func (v *Posts) UnmarshalJSON(data []byte) error {
+	r := jlexer.Lexer{Data: data}
+	easyjsonD2b7633eDecodeForumSrcDictsModels7(&r, v)
+	return r.Error()
+}
+
+// UnmarshalEasyJSON supports easyjson.Unmarshaler interface
+func (v *Posts) UnmarshalEasyJSON(l *jlexer.Lexer) {
+	easyjsonD2b7633eDecodeForumSrcDictsModels7(l, v)
+}
+func easyjsonD2b7633eDecodeForumSrcDictsModels8(in *jlexer.Lexer, out *PostUpdate) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -592,7 +748,7 @@ func easyjsonD2b7633eDecodeForumSrcDictsModels6(in *jlexer.Lexer, out *PostUpdat
 		in.Consumed()
 	}
 }
-func easyjsonD2b7633eEncodeForumSrcDictsModels6(out *jwriter.Writer, in PostUpdate) {
+func easyjsonD2b7633eEncodeForumSrcDictsModels8(out *jwriter.Writer, in PostUpdate) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -608,27 +764,27 @@ func easyjsonD2b7633eEncodeForumSrcDictsModels6(out *jwriter.Writer, in PostUpda
 // MarshalJSON supports json.Marshaler interface
 func (v PostUpdate) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjsonD2b7633eEncodeForumSrcDictsModels6(&w, v)
+	easyjsonD2b7633eEncodeForumSrcDictsModels8(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v PostUpdate) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjsonD2b7633eEncodeForumSrcDictsModels6(w, v)
+	easyjsonD2b7633eEncodeForumSrcDictsModels8(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *PostUpdate) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjsonD2b7633eDecodeForumSrcDictsModels6(&r, v)
+	easyjsonD2b7633eDecodeForumSrcDictsModels8(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *PostUpdate) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjsonD2b7633eDecodeForumSrcDictsModels6(l, v)
+	easyjsonD2b7633eDecodeForumSrcDictsModels8(l, v)
 }
-func easyjsonD2b7633eDecodeForumSrcDictsModels7(in *jlexer.Lexer, out *PostFull) {
+func easyjsonD2b7633eDecodeForumSrcDictsModels9(in *jlexer.Lexer, out *PostFull) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -697,7 +853,7 @@ func easyjsonD2b7633eDecodeForumSrcDictsModels7(in *jlexer.Lexer, out *PostFull)
 		in.Consumed()
 	}
 }
-func easyjsonD2b7633eEncodeForumSrcDictsModels7(out *jwriter.Writer, in PostFull) {
+func easyjsonD2b7633eEncodeForumSrcDictsModels9(out *jwriter.Writer, in PostFull) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -743,27 +899,27 @@ func easyjsonD2b7633eEncodeForumSrcDictsModels7(out *jwriter.Writer, in PostFull
 // MarshalJSON supports json.Marshaler interface
 func (v PostFull) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjsonD2b7633eEncodeForumSrcDictsModels7(&w, v)
+	easyjsonD2b7633eEncodeForumSrcDictsModels9(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v PostFull) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjsonD2b7633eEncodeForumSrcDictsModels7(w, v)
+	easyjsonD2b7633eEncodeForumSrcDictsModels9(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *PostFull) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjsonD2b7633eDecodeForumSrcDictsModels7(&r, v)
+	easyjsonD2b7633eDecodeForumSrcDictsModels9(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *PostFull) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjsonD2b7633eDecodeForumSrcDictsModels7(l, v)
+	easyjsonD2b7633eDecodeForumSrcDictsModels9(l, v)
 }
-func easyjsonD2b7633eDecodeForumSrcDictsModels8(in *jlexer.Lexer, out *Post) {
+func easyjsonD2b7633eDecodeForumSrcDictsModels10(in *jlexer.Lexer, out *Post) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -810,7 +966,7 @@ func easyjsonD2b7633eDecodeForumSrcDictsModels8(in *jlexer.Lexer, out *Post) {
 		in.Consumed()
 	}
 }
-func easyjsonD2b7633eEncodeForumSrcDictsModels8(out *jwriter.Writer, in Post) {
+func easyjsonD2b7633eEncodeForumSrcDictsModels10(out *jwriter.Writer, in Post) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -860,27 +1016,27 @@ func easyjsonD2b7633eEncodeForumSrcDictsModels8(out *jwriter.Writer, in Post) {
 // MarshalJSON supports json.Marshaler interface
 func (v Post) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjsonD2b7633eEncodeForumSrcDictsModels8(&w, v)
+	easyjsonD2b7633eEncodeForumSrcDictsModels10(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v Post) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjsonD2b7633eEncodeForumSrcDictsModels8(w, v)
+	easyjsonD2b7633eEncodeForumSrcDictsModels10(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *Post) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjsonD2b7633eDecodeForumSrcDictsModels8(&r, v)
+	easyjsonD2b7633eDecodeForumSrcDictsModels10(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *Post) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjsonD2b7633eDecodeForumSrcDictsModels8(l, v)
+	easyjsonD2b7633eDecodeForumSrcDictsModels10(l, v)
 }
-func easyjsonD2b7633eDecodeForumSrcDictsModels9(in *jlexer.Lexer, out *Forum) {
+func easyjsonD2b7633eDecodeForumSrcDictsModels11(in *jlexer.Lexer, out *Forum) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -919,7 +1075,7 @@ func easyjsonD2b7633eDecodeForumSrcDictsModels9(in *jlexer.Lexer, out *Forum) {
 		in.Consumed()
 	}
 }
-func easyjsonD2b7633eEncodeForumSrcDictsModels9(out *jwriter.Writer, in Forum) {
+func easyjsonD2b7633eEncodeForumSrcDictsModels11(out *jwriter.Writer, in Forum) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -960,23 +1116,23 @@ func easyjsonD2b7633eEncodeForumSrcDictsModels9(out *jwriter.Writer, in Forum) {
 // MarshalJSON supports json.Marshaler interface
 func (v Forum) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjsonD2b7633eEncodeForumSrcDictsModels9(&w, v)
+	easyjsonD2b7633eEncodeForumSrcDictsModels11(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v Forum) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjsonD2b7633eEncodeForumSrcDictsModels9(w, v)
+	easyjsonD2b7633eEncodeForumSrcDictsModels11(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *Forum) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjsonD2b7633eDecodeForumSrcDictsModels9(&r, v)
+	easyjsonD2b7633eDecodeForumSrcDictsModels11(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *Forum) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjsonD2b7633eDecodeForumSrcDictsModels9(l, v)
+	easyjsonD2b7633eDecodeForumSrcDictsModels11(l, v)
 }
