@@ -1,9 +1,9 @@
 package router
 
 import (
-	"forum/src/database"
 	"forum/src/dicts/forum"
 	"forum/src/dicts/post"
+	"forum/src/dicts/service"
 	"forum/src/dicts/thread"
 	"forum/src/dicts/user"
 	"github.com/gorilla/mux"
@@ -20,8 +20,8 @@ func CreateRouter() *mux.Router {
 	router.HandleFunc("/post/{id}/details", post.ChangePostDetails).Methods("POST")
 	router.HandleFunc("/post/{id}/details", post.GetPostDetails).Methods("GET")
 
-	router.HandleFunc("/service/clear", database.ClearDB).Methods("POST")
-	router.HandleFunc("/service/status", database.GetInformationDB).Methods("GET")
+	router.HandleFunc("/service/clear", service.ClearDB).Methods("POST")
+	router.HandleFunc("/service/status", service.GetInformationDB).Methods("GET")
 
 	router.HandleFunc("/user/{nickname}/create", user.CreateUser).Methods("POST")
 	router.HandleFunc("/user/{nickname}/profile", user.GetUserInfo).Methods("GET")

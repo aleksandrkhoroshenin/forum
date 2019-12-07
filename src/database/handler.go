@@ -2,7 +2,6 @@ package database
 
 import (
 	"github.com/jackc/pgx"
-	"net/http"
 )
 
 type IDataManager struct {
@@ -10,6 +9,7 @@ type IDataManager struct {
 	UserDataManager
 	ThreadDataManager
 	PostDataManager
+	ServiceDataManager
 }
 
 var DataManager IDataManager
@@ -23,12 +23,5 @@ func CreateDataManagerInstance(conn *pgx.ConnPool) {
 	DataManager.UserDataManager = CreateUserInstance(conn)
 	DataManager.ThreadDataManager = CreateThreadInstance(conn)
 	DataManager.PostDataManager = CreatePostInstance(conn)
-}
-
-func ClearDB(w http.ResponseWriter, r *http.Request) {
-
-}
-
-func GetInformationDB(w http.ResponseWriter, r *http.Request) {
-
+	DataManager.ServiceDataManager = CreateServiceInstance(conn)
 }

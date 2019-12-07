@@ -10,6 +10,7 @@ type PostDataManager interface {
 	CreatePostDB(slugOrID string, post *models.Post) error
 	GetPostDB(id int) (*models.Post, error)
 	UpdatePostDB(postUpdate *models.PostUpdate, id int) (*models.Post, error)
+	GetPostFullDB(id int, related []string) (*models.PostFull, error)
 }
 
 func CreatePostInstance(conn *pgx.ConnPool) PostDataManager {
@@ -73,6 +74,32 @@ func (s service) GetPostDB(id int) (*models.Post, error) {
 	} else {
 		return nil, err
 	}
+}
+
+func (s service) GetPostFullDB(id int, related []string) (*models.PostFull, error) {
+	postFull := models.PostFull{}
+	var err error
+	postFull.Post, err = DataManager.GetPostDB(id)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, model := range related {
+		switch model {
+		case "thread":
+			postFull.Thread, err = DataManager.GetThreadDB(strconv.Itoa(int(postFull.Post.Thread)))
+		case "forum":
+			postFull.Forum, err = DataManager.GetForumDB(postFull.Post.Forum)
+		case "user":
+			postFull.Author, err = DataManager.GetUserDB(postFull.Post.Author)
+		}
+
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return &postFull, nil
 }
 
 func (s service) CreatePostDB(slugOrID string, post *models.Post) error {
