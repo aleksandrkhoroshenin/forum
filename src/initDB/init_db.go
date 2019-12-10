@@ -9,7 +9,7 @@ import (
 )
 
 type DbManager interface {
-	DbConnect(host, database, user, password string, port uint16) error
+	DbConnect() error
 	GetConnPool() *pgx.ConnPool
 }
 
@@ -25,7 +25,7 @@ func (db InitDB) GetConnPool() *pgx.ConnPool {
 	return db.pool
 }
 
-func (db *InitDB) DbConnect(host, database, user, password string, port uint16) (err error) {
+func (db *InitDB) DbConnect() (err error) {
 	l := logrus.New()
 	l.SetFormatter(&prefixed.TextFormatter{
 		DisableColors:   true,
@@ -35,13 +35,13 @@ func (db *InitDB) DbConnect(host, database, user, password string, port uint16) 
 	})
 	logger := logrusadapter.NewLogger(l)
 	runtimeParams := make(map[string]string)
-	runtimeParams["application_name"] = "dz"
+	runtimeParams["application_name"] = "Web application"
 	conConfig := pgx.ConnConfig{
-		Host:           host,
-		Port:           port,
-		Database:       database,
-		User:           user,
-		Password:       password,
+		Host:           "127.0.0.1",
+		Port:           5432,
+		Database:       "docker",
+		User:           "docker",
+		Password:       "docker",
 		TLSConfig:      nil,
 		UseFallbackTLS: false,
 		RuntimeParams:  runtimeParams,
