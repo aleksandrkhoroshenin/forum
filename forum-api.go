@@ -21,11 +21,11 @@ func main() {
 	r := router.CreateRouter()
 	srv := &http.Server{
 		Handler:      r,
-		Addr:         "0.0.0.0:80",
+		Addr:         "0.0.0.0:5000",
 		WriteTimeout: 150 * time.Second,
 		ReadTimeout:  150 * time.Second,
 	}
-	println("Listen and Serve " + ":80")
+	println("Listen and Serve " + ":5000")
 	if err := srv.ListenAndServe(); err != nil {
 		log.Println(err)
 		os.Exit(1)

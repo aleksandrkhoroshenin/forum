@@ -2,7 +2,6 @@ package initDB
 
 import (
 	"github.com/jackc/pgx"
-	"github.com/jackc/pgx/log/logrusadapter"
 	"github.com/sirupsen/logrus"
 	"github.com/x-cray/logrus-prefixed-formatter"
 	"log"
@@ -25,6 +24,8 @@ func (db InitDB) GetConnPool() *pgx.ConnPool {
 	return db.pool
 }
 
+const psqlURI = "postgresql://forum:forum@localhost:5432/mydb"
+
 func (db *InitDB) DbConnect() (err error) {
 	l := logrus.New()
 	l.SetFormatter(&prefixed.TextFormatter{
@@ -33,21 +34,22 @@ func (db *InitDB) DbConnect() (err error) {
 		FullTimestamp:   true,
 		ForceFormatting: true,
 	})
-	logger := logrusadapter.NewLogger(l)
+	//logger := logrusadapter.NewLogger(l)
 	runtimeParams := make(map[string]string)
 	runtimeParams["application_name"] = "Web application"
-	conConfig := pgx.ConnConfig{
+	conConfig, _ := pgx.ParseURI(psqlURI)
+	/*	pgx.ConnConfig{
 		Host:           "127.0.0.1",
 		Port:           5432,
-		Database:       "docker",
-		User:           "docker",
-		Password:       "docker",
+		Database:       "forum",
+		User:           "forum",
+		Password:       "forum",
 		TLSConfig:      nil,
 		UseFallbackTLS: false,
 		RuntimeParams:  runtimeParams,
 		LogLevel:       5,
 		Logger:         logger,
-	}
+	}*/
 
 	poolConfig := pgx.ConnPoolConfig{
 		ConnConfig:     conConfig,
