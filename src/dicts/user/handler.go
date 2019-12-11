@@ -1,7 +1,6 @@
 package user
 
 import (
-	"errors"
 	"forum/src/database"
 	"forum/src/dicts"
 	"forum/src/dicts/models"
@@ -20,13 +19,11 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	}
 	params := mux.Vars(r)
 	nickname := params["nickname"]
-	if nickname == "" {
-		dicts.JsonResponse(w, 400, errors.New("nickname is empty! "))
-		return
-	}
+
 	user := &models.User{}
 	err = user.UnmarshalJSON(body)
 	if err != nil {
+		dicts.JsonResponse(w, 500, err.Error())
 		return
 	}
 	user.Nickname = nickname
@@ -46,10 +43,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 func GetUserInfo(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	nickname := params["nickname"]
-	if nickname == "" {
-		dicts.JsonResponse(w, 400, errors.New("nickname is empty! "))
-		return
-	}
+
 	user, err := database.DataManager.GetUserDB(nickname)
 	switch err {
 	case nil:

@@ -9,6 +9,17 @@ const (
 		RETURNING author, created, forum, id, message, title
 	`
 
+	getThreadSlugSQL = `
+		SELECT id, title, author, forum, message, votes, slug, created
+		FROM threads
+		WHERE slug = $1
+	`
+	getThreadIdSQL = `
+		SELECT id, title, author, forum, message, votes, slug, created
+		FROM threads
+		WHERE id = $1
+	`
+
 	getForumThreadsScript = `
 		SELECT author, created, forum, id, message, slug, title, votes
 		FROM threads

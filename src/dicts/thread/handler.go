@@ -1,7 +1,6 @@
 package thread
 
 import (
-	"errors"
 	"forum/src/database"
 	"forum/src/dicts"
 	"forum/src/dicts/models"
@@ -44,10 +43,7 @@ func CreateThreadPost(w http.ResponseWriter, r *http.Request) {
 func GetThreadDetails(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	slugOrID := params["slug_or_id"]
-	if slugOrID == "" {
-		dicts.JsonResponse(w, 400, errors.New("slug_or_id is empty! "))
-		return
-	}
+
 	thread, err := database.DataManager.GetThreadDB(slugOrID)
 	switch err {
 	case nil:

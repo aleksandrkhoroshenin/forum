@@ -4,12 +4,11 @@ import (
 	"forum/src/dicts/models"
 	"github.com/jackc/pgx"
 	"strconv"
-	"strings"
 )
 
 type ThreadDataManager interface {
 	CreateThreadDB(thread *models.Thread) (*models.Thread, error)
-	GetThreadDB(slug string) (*models.Thread, error)
+	GetThreadDB(param string) (*models.Thread, error)
 	GetForumThreads(slug, limit, since, desc string) (*models.Threads, error)
 	GetThreadPostsDB(param, limit, since, sort, desc string) (*models.Posts, error)
 	UpdateThreadDB(thread *models.ThreadUpdate, param string) (*models.Thread, error)
@@ -23,30 +22,49 @@ func CreateThreadInstance(conn *pgx.ConnPool) ThreadDataManager {
 }
 
 // /thread/{slug_or_id}/details
-func (s service) GetThreadDB(slugOrID string) (*models.Thread, error) {
-	sqlRequest := getThreadBySlugScript
-	_, err := strconv.Atoi(slugOrID)
-	if err != nil {
-		sqlRequest = strings.Replace(sqlRequest, "{columnName}", "slug", -1)
+func (s service) GetThreadDB(param string) (*models.Thread, error) {
+	var err error
+	var thread models.Thread
+
+	if isNumber(param) {
+		id, _ := strconv.Atoi(param)
+		err = s.conn.QueryRow(
+			getThreadIdSQL,
+			id,
+		).Scan(
+			&thread.ID,
+			&thread.Title,
+			&thread.Author,
+			&thread.Forum,
+			&thread.Message,
+			&thread.Votes,
+			&thread.Slug,
+			&thread.Created,
+		)
 	} else {
-		sqlRequest = strings.Replace(sqlRequest, "{columnName}", "id", -1)
+		err = s.conn.QueryRow(
+			getThreadSlugSQL,
+			param,
+		).Scan(
+			&thread.ID,
+			&thread.Title,
+			&thread.Author,
+			&thread.Forum,
+			&thread.Message,
+			&thread.Votes,
+			&thread.Slug,
+			&thread.Created,
+		)
 	}
-	thread := &models.Thread{}
-	err = s.conn.QueryRow(sqlRequest, slugOrID).Scan(
-		&thread.Author,
-		&thread.Created,
-		&thread.Message,
-		&thread.Title,
-		&thread.Slug,
-		&thread.Forum,
-	)
+
 	if err != nil {
 		return nil, ThreadNotFound
 	}
-	return thread, nil
+
+	return &thread, nil
 }
 
-//
+// /forum/{slug}/create Создание ветки
 func (s service) CreateThreadDB(thread *models.Thread) (*models.Thread, error) {
 	if thread.Slug != "" {
 		t, err := DataManager.GetThreadDB(thread.Slug)
@@ -92,6 +110,7 @@ var queryForumNoSience = map[string]string{
 	"false": getForumThreadsSQL,
 }
 
+// /forum/{slug}/threads
 func (s service) GetForumThreads(slug, limit, since, desc string) (*models.Threads, error) {
 	var rows *pgx.Rows
 	var err error
