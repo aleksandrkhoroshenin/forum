@@ -30,13 +30,13 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	user.Nickname = nickname
-	err = database.DataManager.CreateUserDB(user)
+	result, err := database.DataManager.CreateUserDB(user)
 
 	switch err {
 	case nil:
 		dicts.JsonResponse(w, 201, user)
 	case database.UserIsExist:
-		dicts.JsonResponse(w, 409, user)
+		dicts.JsonResponse(w, 409, result)
 	default:
 		dicts.JsonResponse(w, 500, err.Error())
 	}
@@ -63,29 +63,32 @@ func GetUserInfo(w http.ResponseWriter, r *http.Request) {
 
 // /user/{nickname}/profile
 func ChangeUserInfo(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+	nickname := params["nickname"]
+
 	body, err := ioutil.ReadAll(r.Body)
 	defer r.Body.Close()
 	if err != nil {
 		dicts.JsonResponse(w, 500, err.Error())
 		return
 	}
-	params := mux.Vars(r)
-	nickname := params["nickname"]
-	if nickname == "" {
-		dicts.JsonResponse(w, 400, errors.New("nickname is empty! "))
-		return
-	}
+
 	user := &models.User{}
 	err = user.UnmarshalJSON(body)
 	if err != nil {
+		dicts.JsonResponse(w, 500, err.Error())
 		return
 	}
-	err = database.DataManager.UpdateUserDB(nickname, user)
+	user.Nickname = nickname
+
+	err = database.DataManager.UpdateUserDB(user)
 	switch err {
 	case nil:
 		dicts.JsonResponse(w, 200, user)
 	case database.UserNotFound:
 		dicts.JsonResponse(w, 404, dicts.ErrorFindUserByNick(nickname))
+	case database.UserUpdateConflict:
+		dicts.JsonResponse(w, 409, dicts.ErrorEmailIsAlreadyExist(nickname))
 	default:
 		dicts.JsonResponse(w, 500, err.Error())
 	}

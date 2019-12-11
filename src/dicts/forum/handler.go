@@ -73,7 +73,7 @@ func CreateForumBranch(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	thread.Slug = slug
-	err = database.DataManager.CreateThreadDB(thread)
+	thread, err = database.DataManager.CreateThreadDB(thread)
 	switch err {
 	case nil:
 		dicts.JsonResponse(w, 201, thread)
@@ -90,14 +90,16 @@ func CreateForumBranch(w http.ResponseWriter, r *http.Request) {
 func GetBranchThreads(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	slug := params["slug"]
-	if slug == "" {
-		dicts.JsonResponse(w, 400, errors.New("slug is empty! "))
-		return
-	}
 	queryParams := r.URL.Query()
-	query := dicts.ParseQueryParams(queryParams)
-
-	threads, err := database.DataManager.GetForumThreads(slug, query)
+	var limit, since, desc string
+	if limit = queryParams.Get("limit"); limit == "" {
+		limit = "1"
+	}
+	since = queryParams.Get("since")
+	if desc = queryParams.Get("desc"); desc == "" {
+		desc = "false"
+	}
+	threads, err := database.DataManager.GetForumThreads(slug, limit, since, desc)
 	switch err {
 	case nil:
 		dicts.JsonResponse(w, 200, threads)
@@ -112,13 +114,17 @@ func GetBranchThreads(w http.ResponseWriter, r *http.Request) {
 func GetBranchUsers(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	slug := params["slug"]
-	if slug == "" {
-		dicts.JsonResponse(w, 400, errors.New("slug is empty! "))
-		return
-	}
 	queryParams := r.URL.Query()
-	query := dicts.ParseQueryParams(queryParams)
-	users, err := database.DataManager.GetForumUsersDB(slug, query)
+	var limit, since, desc string
+	if limit = queryParams.Get("limit"); limit == "" {
+		limit = "1"
+	}
+	since = queryParams.Get("since")
+	if desc = queryParams.Get("desc"); desc == "" {
+		desc = "false"
+	}
+
+	users, err := database.DataManager.GetForumUsersDB(slug, limit, since, desc)
 	switch err {
 	case nil:
 		dicts.JsonResponse(w, 200, users)

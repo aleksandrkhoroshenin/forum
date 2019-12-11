@@ -19,19 +19,16 @@ func CreateThreadPost(w http.ResponseWriter, r *http.Request) {
 	}
 	params := mux.Vars(r)
 	slugOrID := params["slug_or_id"]
-	if slugOrID == "" {
-		dicts.JsonResponse(w, 400, errors.New("slugOrID is empty! "))
-		return
-	}
-	post := &models.Post{}
-	err = post.UnmarshalJSON(body)
+
+	posts := &models.Posts{}
+	err = posts.UnmarshalJSON(body)
 	if err != nil {
 		return
 	}
-	err = database.DataManager.CreatePostDB(slugOrID, post)
+	res, err := database.DataManager.CreatePostDB(posts, slugOrID)
 	switch err {
 	case nil:
-		dicts.JsonResponse(w, 201, post)
+		dicts.JsonResponse(w, 201, res)
 	case database.ThreadNotFound:
 		dicts.JsonResponse(w, 404, dicts.ErrorThreadID(slugOrID))
 	case database.UserNotFound:

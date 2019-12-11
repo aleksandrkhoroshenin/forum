@@ -1,8 +1,6 @@
 package database
 
 import (
-	"errors"
-	"forum/src/dicts"
 	"forum/src/dicts/models"
 	"github.com/jackc/pgx"
 	"strconv"
@@ -10,9 +8,9 @@ import (
 )
 
 type ThreadDataManager interface {
-	CreateThreadDB(thread *models.Thread) error
+	CreateThreadDB(thread *models.Thread) (*models.Thread, error)
 	GetThreadDB(slug string) (*models.Thread, error)
-	GetForumThreads(slug string, query dicts.QueryParams) ([]*models.Thread, error)
+	GetForumThreads(slug, limit, since, desc string) (*models.Threads, error)
 	GetThreadPostsDB(param, limit, since, sort, desc string) (*models.Posts, error)
 	UpdateThreadDB(thread *models.ThreadUpdate, param string) (*models.Thread, error)
 	MakeThreadVoteDB(vote *models.Vote, param string) (*models.Thread, error)
@@ -49,17 +47,15 @@ func (s service) GetThreadDB(slugOrID string) (*models.Thread, error) {
 }
 
 //
-func (s service) CreateThreadDB(thread *models.Thread) (err error) {
+func (s service) CreateThreadDB(thread *models.Thread) (*models.Thread, error) {
 	if thread.Slug != "" {
-		_, err := DataManager.GetThreadDB(thread.Slug)
+		t, err := DataManager.GetThreadDB(thread.Slug)
 		if err == nil {
-			return ThreadIsExist
+			return t, ThreadIsExist
 		}
 	}
-	if thread == nil {
-		return errors.New("Body is not valid ")
-	}
-	err = s.conn.QueryRow(createThreadScript,
+
+	err := s.conn.QueryRow(createThreadScript,
 		&thread.Author,
 		&thread.Created,
 		&thread.Message,
@@ -76,62 +72,66 @@ func (s service) CreateThreadDB(thread *models.Thread) (err error) {
 	)
 	switch ErrorCode(err) {
 	case pgxOK:
-		return nil
+		return thread, nil
 	case pgxErrNotNull:
-		return ForumOrAuthorNotFound //UserNotFound
+		return nil, ForumOrAuthorNotFound //UserNotFound
 	case pgxErrForeignKey:
-		return ForumOrAuthorNotFound //ForumIsExist
+		return nil, ForumOrAuthorNotFound //ForumIsExist
 	default:
-		return err
+		return nil, err
 	}
 }
 
-func (s service) GetForumThreads(slug string, query dicts.QueryParams) ([]*models.Thread, error) {
+var queryForumWithSience = map[string]string{
+	"true":  getForumThreadsDescSinceSQL,
+	"false": getForumThreadsSinceSQL,
+}
+
+var queryForumNoSience = map[string]string{
+	"true":  getForumThreadsDescSQL,
+	"false": getForumThreadsSQL,
+}
+
+func (s service) GetForumThreads(slug, limit, since, desc string) (*models.Threads, error) {
 	var rows *pgx.Rows
 	var err error
-	threads := make([]*models.Thread, 0)
-	sqlRequest := getForumThreadsSinceScript
-	sqlRequest = strings.Replace(sqlRequest, "{limit}", query.Limit, -1)
-	if query.Desc == "" {
-		sqlRequest = strings.Replace(sqlRequest, "DESC", "", -1)
-	}
-	if query.Since == "" {
-		sqlRequest = strings.Replace(sqlRequest, "{sinceQuery}", "", -1)
-		rows, err = s.conn.Query(sqlRequest, &slug)
+
+	if since != "" {
+		query := queryForumWithSience[desc]
+		rows, err = s.conn.Query(query, slug, since, limit)
 	} else {
-		sqlRequest = strings.Replace(sqlRequest, "{sinceQuery}", sinceQuery, -1)
-		rows, err = s.conn.Query(sqlRequest, &slug, &query.Since)
+		query := queryForumNoSience[desc]
+		rows, err = s.conn.Query(query, slug, limit)
 	}
-	if rows == nil {
-		return nil, errors.New("rows is nil")
-	}
+	defer rows.Close()
+
 	if err != nil {
 		return nil, ForumNotFound
 	}
-	defer rows.Close()
+
+	threads := models.Threads{}
 	for rows.Next() {
-		thread := &models.Thread{}
+		t := models.Thread{}
 		err = rows.Scan(
-			&thread.Author,
-			&thread.Created,
-			&thread.Forum,
-			&thread.ID,
-			&thread.Message,
-			&thread.Slug,
-			&thread.Title,
-			&thread.Votes,
+			&t.Author,
+			&t.Created,
+			&t.Forum,
+			&t.ID,
+			&t.Message,
+			&t.Slug,
+			&t.Title,
+			&t.Votes,
 		)
-		threads = append(threads, thread)
+		threads = append(threads, &t)
 	}
 
 	if len(threads) == 0 {
-		_, err := DataManager.GetForumDB(slug)
+		_, err := s.GetForumDB(slug)
 		if err != nil {
 			return nil, ForumNotFound
 		}
 	}
-
-	return threads, nil
+	return &threads, nil
 }
 
 // /thread/{slug_or_id}/vote

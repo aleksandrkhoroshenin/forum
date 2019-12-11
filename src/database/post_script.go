@@ -1,12 +1,12 @@
 package database
 
 const (
-	getPostScript = `
+	getPostSQL = `
 		SELECT id, author, message, forum, thread, created, "isEdited", parent
 		FROM posts 
 		WHERE id = $1
 	`
-	updatePostScript = `
+	updatePostSQL = `
 		UPDATE posts 
 		SET message = COALESCE($2, message), "isEdited" = ($2 IS NOT NULL AND $2 <> message) 
 		WHERE id = $1 

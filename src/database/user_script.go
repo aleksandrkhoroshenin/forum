@@ -3,38 +3,32 @@ package database
 import "errors"
 
 const (
-	createUserScript = `
+	createUserSQL = `
 		INSERT
 		INTO users ("nickname", "fullname", "email", "about")
 		VALUES ($1, $2, $3, $4) ON CONFLICT DO NOTHING
 	`
-	getUserByNicknameOrEmailScript = `
+	getUserByNicknameOrEmailSQL = `
 		SELECT "nickname", "fullname", "email", "about"
 		FROM users
 		WHERE "nickname" = $1 OR "email" = $2
 	`
-	getUserByNicknameScript = `
+	getUserByNickname = `
 		SELECT "nickname", "fullname", "email", "about"
 		FROM users
 		WHERE "nickname" = $1
 	`
-
-	getForumUsersSinceScript = `
-		SELECT nickname, fullname, about, email
+	getUserSQL = `
+		SELECT "nickname", "fullname", "email", "about"
 		FROM users
-		WHERE nickname IN (
-				SELECT forum_user FROM forum_users WHERE forum = $1
-			) 
-		ORDER BY nickname DESC
-		LIMIT $2
+		WHERE "nickname" = $1
 	`
-	updateUserScript = `
+	updateUserSQL = `
 		UPDATE users
-		SET fullname = coalesce(nullif($1, ''), fullname),
-			email = coalesce(nullif($2, ''), email),
-			about = coalesce(nullif($3, ''), about),
-			nickname = coalesce(nullif($4, ''), nickname)
-		WHERE "nickname" = $5
+		SET fullname = coalesce(nullif($2, ''), fullname),
+			email = coalesce(nullif($3, ''), email),
+			about = coalesce(nullif($4, ''), about)
+		WHERE "nickname" = $1
 		RETURNING nickname, fullname, email, about
 	`
 )
