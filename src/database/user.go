@@ -20,7 +20,7 @@ func CreateUserInstance(conn *pgx.ConnPool) UserDataManager {
 
 // /user/{nickname}/create Создание нового пользователя
 func (s service) CreateUserDB(u *models.User) (*models.Users, error) {
-	rows, err := DB.pool.Exec(
+	rows, err := s.conn.Exec(
 		createUserSQL,
 		&u.Nickname,
 		&u.Fullname,
@@ -33,7 +33,7 @@ func (s service) CreateUserDB(u *models.User) (*models.Users, error) {
 
 	if rows.RowsAffected() == 0 { // пользователь уже есть
 		users := models.Users{}
-		queryRows, err := DB.pool.Query(getUserByNicknameOrEmailSQL, &u.Nickname, &u.Email)
+		queryRows, err := s.conn.Query(getUserByNicknameOrEmailSQL, &u.Nickname, &u.Email)
 		defer queryRows.Close()
 
 		if err != nil {
@@ -58,7 +58,7 @@ func (s service) CreateUserDB(u *models.User) (*models.Users, error) {
 func (s service) GetUserDB(nickname string) (*models.User, error) {
 	user := models.User{}
 
-	err := DB.pool.QueryRow(getUserSQL, nickname).Scan(
+	err := s.conn.QueryRow(getUserSQL, nickname).Scan(
 		&user.Nickname,
 		&user.Fullname,
 		&user.Email,
@@ -74,7 +74,7 @@ func (s service) GetUserDB(nickname string) (*models.User, error) {
 
 // /user/{nickname}/profile Изменение данных о пользователе
 func (s service) UpdateUserDB(user *models.User) error {
-	err := DB.pool.QueryRow(
+	err := s.conn.QueryRow(
 		updateUserSQL,
 		&user.Nickname,
 		&user.Fullname,
@@ -113,10 +113,10 @@ func (s service) GetForumUsersDB(slug, limit, since, desc string) (*models.Users
 
 	if since != "" {
 		query := queryForumUserWithSience[desc]
-		rows, err = DB.pool.Query(query, slug, since, limit)
+		rows, err = s.conn.Query(query, slug, since, limit)
 	} else {
 		query := queryForumUserNoSience[desc]
-		rows, err = DB.pool.Query(query, slug, limit)
+		rows, err = s.conn.Query(query, slug, limit)
 	}
 	defer rows.Close()
 
