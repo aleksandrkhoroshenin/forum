@@ -134,8 +134,7 @@ func ChangeVoteForBranch(w http.ResponseWriter, r *http.Request) {
 
 	switch err {
 	case nil:
-		resp, _ := result.MarshalJSON()
-		dicts.JsonResponse(w, 200, resp)
+		dicts.JsonResponse(w, 200, result)
 	case database.ForumNotFound:
 		dicts.JsonResponse(w, 404, dicts.ErrorThread(param))
 	case database.UserNotFound:
