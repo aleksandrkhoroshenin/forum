@@ -11,14 +11,15 @@ import (
 
 // /user/{nickname}/create
 func CreateUser(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+	nickname := params["nickname"]
+
 	body, err := ioutil.ReadAll(r.Body)
 	defer r.Body.Close()
 	if err != nil {
 		dicts.JsonResponse(w, 500, err.Error())
 		return
 	}
-	params := mux.Vars(r)
-	nickname := params["nickname"]
 
 	user := &models.User{}
 	err = user.UnmarshalJSON(body)

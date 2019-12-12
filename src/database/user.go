@@ -42,7 +42,10 @@ func (s service) CreateUserDB(u *models.User) (*models.Users, error) {
 
 		for queryRows.Next() {
 			user := models.User{}
-			queryRows.Scan(&user.Nickname, &user.Fullname, &user.Email, &user.About)
+			err = queryRows.Scan(&user.Nickname, &user.Fullname, &user.Email, &user.About)
+			if err != nil {
+				return nil, err
+			}
 			users = append(users, &user)
 		}
 		return &users, UserIsExist
