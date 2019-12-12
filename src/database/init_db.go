@@ -64,6 +64,6 @@ func (db *InitDB) DbConnect() (err error) {
 		log.Println(err)
 		return err
 	}
-	db.pool = p
+	DB.pool = p
 	return nil
 }
