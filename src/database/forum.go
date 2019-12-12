@@ -6,7 +6,7 @@ import (
 )
 
 type ForumDataManager interface {
-	CreateForumDB(forum *models.Forum) error
+	CreateForumDB(forum *models.Forum) (*models.Forum, error)
 	GetForumDB(slug string) (*models.Forum, error)
 }
 
@@ -16,21 +16,21 @@ func CreateForumInstance(conn *pgx.ConnPool) ForumDataManager {
 	}
 }
 
-func (s service) CreateForumDB(forum *models.Forum) error {
+func (s service) CreateForumDB(f *models.Forum) (*models.Forum, error) {
 	err := DB.pool.QueryRow(createForumScript,
-		&forum.Slug,
-		&forum.Title,
-		&forum.User).Scan(&forum.User)
+		&f.Slug,
+		&f.Title,
+		&f.User).Scan(&f.User)
 	switch ErrorCode(err) {
 	case pgxOK:
-		return nil
+		return f, nil
 	case pgxErrUnique:
-		forum, _ = s.GetForumDB(forum.Slug)
-		return ForumIsExist
+		forum, _ := s.GetForumDB(f.Slug)
+		return forum, ForumIsExist
 	case pgxErrNotNull:
-		return UserNotFound
+		return nil, UserNotFound
 	default:
-		return err
+		return nil, err
 	}
 }
 

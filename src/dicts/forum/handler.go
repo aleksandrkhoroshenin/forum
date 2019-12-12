@@ -23,14 +23,14 @@ func CreateForum(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		return
 	}
-	err = database.DataManager.CreateForumDB(forum)
+	result, err := database.DataManager.CreateForumDB(forum)
 	switch err {
 	case nil:
 		dicts.JsonResponse(w, 201, forum)
 	case database.UserNotFound:
 		dicts.JsonResponse(w, 404, dicts.ErrorFindUserByNick(forum.User))
 	case database.ForumIsExist:
-		dicts.JsonResponse(w, 409, forum)
+		dicts.JsonResponse(w, 409, result)
 	default:
 		dicts.JsonResponse(w, 500, err.Error())
 	}
@@ -73,14 +73,14 @@ func CreateForumBranch(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	thread.Slug = slug
-	thread, err = database.DataManager.CreateThreadDB(thread)
+	result, err := database.DataManager.CreateThreadDB(thread)
 	switch err {
 	case nil:
-		dicts.JsonResponse(w, 201, thread)
+		dicts.JsonResponse(w, 201, result)
 	case database.ForumOrAuthorNotFound:
 		dicts.JsonResponse(w, 404, dicts.ErrorFindUserByNick(slug))
 	case database.ThreadIsExist:
-		dicts.JsonResponse(w, 409, thread)
+		dicts.JsonResponse(w, 409, result)
 	default:
 		dicts.JsonResponse(w, 500, err.Error())
 	}
