@@ -27,7 +27,7 @@ RUN service postgresql start &&\
 WORKDIR app
 COPY --from=builder /usr/src/app .
 
-RUN cat init.sql
+#RUN cat init.sql
 
 RUN echo "host all all 0.0.0.0/0 md5" >> /etc/postgresql/10/main/pg_hba.conf
 RUN echo "listen_addresses = '*'\nsynchronous_commit = off\nfsync = off\nunix_socket_directories = '/var/run/postgresql'" >> /etc/postgresql/10/main/postgresql.conf
