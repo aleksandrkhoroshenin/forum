@@ -72,7 +72,7 @@ func CreateForumBranch(w http.ResponseWriter, r *http.Request) {
 		dicts.JsonResponse(w, 500, err.Error())
 		return
 	}
-	thread.Slug = slug
+	thread.Forum = slug
 	result, err := database.DataManager.CreateThreadDB(thread)
 	switch err {
 	case nil:
