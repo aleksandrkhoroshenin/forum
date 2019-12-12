@@ -51,7 +51,7 @@ func GetThreadDetails(w http.ResponseWriter, r *http.Request) {
 	case database.ThreadNotFound:
 		dicts.JsonResponse(w, 404, dicts.ErrorThread(slugOrID))
 	default:
-		dicts.JsonResponse(w, 500, []byte(err.Error()))
+		dicts.JsonResponse(w, 500, err.Error())
 	}
 }
 
@@ -63,7 +63,7 @@ func ChangeThreadDetails(w http.ResponseWriter, r *http.Request) {
 	body, err := ioutil.ReadAll(r.Body)
 	defer r.Body.Close()
 	if err != nil {
-		dicts.JsonResponse(w, 500, []byte(err.Error()))
+		dicts.JsonResponse(w, 500, err.Error())
 		return
 	}
 	threadUpdate := &models.ThreadUpdate{}
@@ -71,7 +71,7 @@ func ChangeThreadDetails(w http.ResponseWriter, r *http.Request) {
 
 	//err = forum.Validate()
 	if err != nil {
-		dicts.JsonResponse(w, 500, []byte(err.Error()))
+		dicts.JsonResponse(w, 500, err.Error())
 		return
 	}
 
@@ -79,8 +79,7 @@ func ChangeThreadDetails(w http.ResponseWriter, r *http.Request) {
 
 	switch err {
 	case nil:
-		resp, _ := result.MarshalJSON()
-		dicts.JsonResponse(w, 200, resp)
+		dicts.JsonResponse(w, 200, result)
 	case database.PostNotFound:
 		dicts.JsonResponse(w, 404, dicts.ErrorThread(param))
 	default:
@@ -108,8 +107,7 @@ func GetPostsFromBranch(w http.ResponseWriter, r *http.Request) {
 
 	switch err {
 	case nil:
-		resp, _ := result.MarshalJSON()
-		dicts.JsonResponse(w, 200, resp)
+		dicts.JsonResponse(w, 200, result)
 	case database.ForumNotFound:
 		dicts.JsonResponse(w, 404, dicts.ErrorThread(param))
 	default:
@@ -124,7 +122,7 @@ func ChangeVoteForBranch(w http.ResponseWriter, r *http.Request) {
 	body, err := ioutil.ReadAll(r.Body)
 	defer r.Body.Close()
 	if err != nil {
-		dicts.JsonResponse(w, 500, []byte(err.Error()))
+		dicts.JsonResponse(w, 500, err.Error())
 		return
 	}
 	vote := &models.Vote{}

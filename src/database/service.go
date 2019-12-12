@@ -19,7 +19,7 @@ const (
 )
 
 type ServiceDataManager interface {
-	GetStatusDB() *models.Status
+	GetStatusDB() (*models.Status, error)
 	ClearDB()
 }
 
@@ -30,9 +30,9 @@ func CreateServiceInstance(conn *pgx.ConnPool) ServiceDataManager {
 }
 
 // /service/status Получение инфомарции о базе данных
-func (s service) GetStatusDB() *models.Status {
+func (s service) GetStatusDB() (*models.Status, error) {
 	status := &models.Status{}
-	DB.pool.QueryRow(
+	err := DB.pool.QueryRow(
 		getStatusSQL,
 	).Scan(
 		&status.User,
@@ -40,7 +40,10 @@ func (s service) GetStatusDB() *models.Status {
 		&status.Post,
 		&status.Thread,
 	)
-	return status
+	if err != nil {
+		return nil, err
+	}
+	return status, nil
 }
 
 func (s service) ClearDB() {

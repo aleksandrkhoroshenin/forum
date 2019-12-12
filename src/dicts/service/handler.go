@@ -11,12 +11,11 @@ func ClearDB(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetInformationDB(w http.ResponseWriter, r *http.Request) {
-	result := database.DataManager.GetStatusDB()
-	resp, err := result.MarshalJSON()
+	result, err := database.DataManager.GetStatusDB()
 
 	switch err {
 	case nil:
-		dicts.JsonResponse(w, 200, resp)
+		dicts.JsonResponse(w, 200, result)
 	default:
 		dicts.JsonResponse(w, 500, err.Error())
 	}
