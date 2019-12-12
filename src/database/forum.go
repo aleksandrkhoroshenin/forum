@@ -17,7 +17,7 @@ func CreateForumInstance(conn *pgx.ConnPool) ForumDataManager {
 }
 
 func (s service) CreateForumDB(forum *models.Forum) error {
-	err := s.conn.QueryRow(createForumScript,
+	err := DB.pool.QueryRow(createForumScript,
 		&forum.Slug,
 		&forum.Title,
 		&forum.User).Scan(&forum.User)
@@ -37,7 +37,7 @@ func (s service) CreateForumDB(forum *models.Forum) error {
 func (s service) GetForumDB(slug string) (*models.Forum, error) {
 	f := models.Forum{}
 
-	err := s.conn.QueryRow(
+	err := DB.pool.QueryRow(
 		getForumScript,
 		slug,
 	).Scan(

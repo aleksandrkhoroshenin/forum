@@ -32,7 +32,7 @@ func CreateServiceInstance(conn *pgx.ConnPool) ServiceDataManager {
 // /service/status Получение инфомарции о базе данных
 func (s service) GetStatusDB() *models.Status {
 	status := &models.Status{}
-	s.conn.QueryRow(
+	DB.pool.QueryRow(
 		getStatusSQL,
 	).Scan(
 		&status.User,
@@ -44,5 +44,5 @@ func (s service) GetStatusDB() *models.Status {
 }
 
 func (s service) ClearDB() {
-	s.conn.Exec(clearSQL)
+	DB.pool.Exec(clearSQL)
 }

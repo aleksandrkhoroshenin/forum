@@ -1,4 +1,4 @@
-package initDB
+package database
 
 import (
 	"github.com/jackc/pgx"
@@ -23,6 +23,8 @@ func Init() DbManager {
 func (db InitDB) GetConnPool() *pgx.ConnPool {
 	return db.pool
 }
+
+var DB InitDB
 
 const psqlURI = "postgresql://forum:forum@localhost:5432/mydb"
 

@@ -2,7 +2,6 @@ package main
 
 import (
 	"forum/src/database"
-	"forum/src/initDB"
 	"forum/src/router"
 	"log"
 	"net/http"
@@ -11,7 +10,7 @@ import (
 )
 
 func main() {
-	db := initDB.Init()
+	db := database.Init()
 	err := db.DbConnect()
 	if err != nil {
 		log.Println(err)

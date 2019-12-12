@@ -32,7 +32,7 @@ func (s service) UpdatePostDB(postUpdate *models.PostUpdate, id int) (*models.Po
 		return post, nil
 	}
 
-	rows := s.conn.QueryRow(updatePostSQL, strconv.Itoa(id), &postUpdate.Message)
+	rows := DB.pool.QueryRow(updatePostSQL, strconv.Itoa(id), &postUpdate.Message)
 
 	err = rows.Scan(
 		&post.Author,
@@ -57,7 +57,7 @@ func (s service) UpdatePostDB(postUpdate *models.PostUpdate, id int) (*models.Po
 func (s service) GetPostDB(id int) (*models.Post, error) {
 	post := models.Post{}
 
-	err := s.conn.QueryRow(
+	err := DB.pool.QueryRow(
 		getPostSQL,
 		id,
 	).Scan(
@@ -138,7 +138,7 @@ func (s service) CreatePostDB(posts *models.Posts, param string) (*models.Posts,
 	}
 	query.WriteString("RETURNING author, created, forum, id, message, parent, thread")
 
-	tx, txErr := s.conn.Begin()
+	tx, txErr := DB.pool.Begin()
 	if txErr != nil {
 		return nil, txErr
 	}
@@ -191,7 +191,7 @@ func (s *service) checkPost(p *models.Post, t *models.Thread) error {
 
 func (s *service) authorExists(nickname string) bool {
 	var user models.User
-	err := s.conn.QueryRow(
+	err := DB.pool.QueryRow(
 		getUserByNickname,
 		nickname,
 	).Scan(
@@ -215,7 +215,7 @@ const postID = `
 
 func (s *service) parentExitsInOtherThread(parent int64, threadID int32) bool {
 	var t int64
-	err := s.conn.QueryRow(postID, parent, threadID).Scan(&t)
+	err := DB.pool.QueryRow(postID, parent, threadID).Scan(&t)
 
 	if err != nil && err.Error() == noRowsInResult {
 		return false
@@ -229,7 +229,7 @@ func (s *service) parentNotExists(parent int64) bool {
 	}
 
 	var t int64
-	err := s.conn.QueryRow(`SELECT id FROM posts WHERE id = $1`, parent).Scan(&t)
+	err := DB.pool.QueryRow(`SELECT id FROM posts WHERE id = $1`, parent).Scan(&t)
 
 	if err != nil {
 		return true

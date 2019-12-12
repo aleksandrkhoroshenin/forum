@@ -28,7 +28,7 @@ func (s service) GetThreadDB(param string) (*models.Thread, error) {
 
 	if isNumber(param) {
 		id, _ := strconv.Atoi(param)
-		err = s.conn.QueryRow(
+		err = DB.pool.QueryRow(
 			getThreadIdSQL,
 			id,
 		).Scan(
@@ -42,7 +42,7 @@ func (s service) GetThreadDB(param string) (*models.Thread, error) {
 			&thread.Created,
 		)
 	} else {
-		err = s.conn.QueryRow(
+		err = DB.pool.QueryRow(
 			getThreadSlugSQL,
 			param,
 		).Scan(
@@ -73,7 +73,7 @@ func (s service) CreateThreadDB(thread *models.Thread) (*models.Thread, error) {
 		}
 	}
 
-	err := s.conn.QueryRow(createThreadScript,
+	err := DB.pool.QueryRow(createThreadScript,
 		&thread.Author,
 		&thread.Created,
 		&thread.Message,
@@ -117,10 +117,10 @@ func (s service) GetForumThreads(slug, limit, since, desc string) (*models.Threa
 
 	if since != "" {
 		query := queryForumWithSience[desc]
-		rows, err = s.conn.Query(query, slug, since, limit)
+		rows, err = DB.pool.Query(query, slug, since, limit)
 	} else {
 		query := queryForumNoSience[desc]
-		rows, err = s.conn.Query(query, slug, limit)
+		rows, err = DB.pool.Query(query, slug, limit)
 	}
 	defer rows.Close()
 
@@ -157,7 +157,7 @@ func (s service) GetForumThreads(slug, limit, since, desc string) (*models.Threa
 func (s service) MakeThreadVoteDB(vote *models.Vote, param string) (*models.Thread, error) {
 	var err error
 
-	tx, txErr := s.conn.Begin()
+	tx, txErr := DB.pool.Begin()
 	if txErr != nil {
 		return nil, txErr
 	}
@@ -259,10 +259,10 @@ func (s service) GetThreadPostsDB(param, limit, since, sort, desc string) (*mode
 
 	if since != "" {
 		query := queryPostsWithSience[desc][sort]
-		rows, err = s.conn.Query(query, thread.ID, since, limit)
+		rows, err = DB.pool.Query(query, thread.ID, since, limit)
 	} else {
 		query := queryPostsNoSience[desc][sort]
-		rows, err = s.conn.Query(query, thread.ID, limit)
+		rows, err = DB.pool.Query(query, thread.ID, limit)
 	}
 	defer rows.Close()
 
@@ -304,7 +304,7 @@ func (s service) UpdateThreadDB(thread *models.ThreadUpdate, param string) (*mod
 
 	updatedThread := models.Thread{}
 
-	err = s.conn.QueryRow(updateThreadSQL,
+	err = DB.pool.QueryRow(updateThreadSQL,
 		&threadFound.Slug,
 		&thread.Title,
 		&thread.Message,
